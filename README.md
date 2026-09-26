@@ -1,147 +1,65 @@
 # DS-262 — Data Structures
 
-Official repository for the Data Structures course.
+Official repository for the Data Structures course taught by Sebastián Yepes García at Universidad Nacional de Colombia.
 
-This repository contains instructor reference implementations, student implementations, exercises, and supporting material used during the semester.
+Students practice data structures in Java and learn to contribute through branches, pull requests, feedback, and revisions throughout the semester.
 
-## Repository Structure
+## Course groups and organization
+
+- **DS3**: Group 03.
+- **DS4**: Group 04.
+
+Each course group has two areas: `individual/` for each student's own work and `teams/` for collaborative labs and projects. The structure below includes illustrative student and team folders; students create their actual folders in their first pull request.
 
 ```text
 DS-262/
-├── implementations/
-│   ├── instructor/
-│   └── students/
-│       ├── group-02/
-│       └── group-04/
+├── DS3/
+│   ├── individual/
+│   │   └── github-username/
+│   │       ├── README.md
+│   │       └── exercises/
+│   │           └── linked-lists/
+│   └── teams/
+│       └── team-01/
+│           ├── README.md
+│           ├── labs/
+│           │   └── lab-01/
+│           └── projects/
+│               └── project-01/
+├── DS4/
+│   ├── individual/
+│   │   └── github-username/
+│   │       ├── README.md
+│   │       └── exercises/
+│   └── teams/
+│       └── team-01/
+│           ├── README.md
+│           ├── labs/
+│           └── projects/
+├── implementations/instructor/
 ├── exercises/
 ├── docs/
 ├── README.md
-├── CONTRIBUTING.md
-└── .gitignore
+└── CONTRIBUTING.md
 ```
 
-## Instructor Implementations
+The root `exercises/` folder is for instructor assignment statements. Student solutions belong in `DS3/` or `DS4/`. Shared reference implementations stay in `implementations/instructor/`; supporting course material stays in `docs/`.
 
-Reference implementations developed during the course are stored under:
+## How contributions work
 
-```text
-implementations/instructor/
-```
+1. Fork the course repository and clone your fork.
+2. Synchronize with the course repository before each new contribution.
+3. Create a branch for one exercise, lab, project milestone, or improvement.
+4. Work in your individual folder or your assigned team's folder.
+5. Run your code, document how to run it, and submit a pull request to the course repository's `main` branch.
+6. Respond to feedback on the same branch. The instructor reviews and merges accepted contributions.
 
-These implementations are shared by both course groups.
+Use small, meaningful contributions throughout the semester. A project can have several pull requests for its implementation, tests, documentation, and later improvements. Commit or pull-request counts alone do not demonstrate learning.
 
-Typical topics include:
+Read the [student contribution guide](CONTRIBUTING.md) before starting. The [instructor setup guide](docs/instructor-guide.md) describes the proposed rollout and repository settings.
 
-* Linked Lists
-* Stacks
-* Queues
-* Circular Arrays
-* Dynamic Arrays
-* Trees
-* Heaps
-* Hash Tables
-* Graphs
+## Authorship and academic integrity
 
-Instructor implementations may be published after the corresponding topic or assignment has been completed.
+Individual submissions must be the student's own work under the assignment's collaboration rules. Team submissions must identify members and their contributions. Cite external references and disclose assistance according to course policy. Do not copy another student's or team's solution or submit instructor code as your own.
 
-## Student Implementations
-
-Student contributions are separated by course group.
-
-### Group 02
-
-```text
-implementations/students/group-02/
-```
-
-### Group 04
-
-```text
-implementations/students/group-04/
-```
-
-Each team must create its own directory.
-
-Example:
-
-```text
-implementations/students/group-02/team-01/
-implementations/students/group-02/team-02/
-```
-
-or:
-
-```text
-implementations/students/group-04/team-01/
-implementations/students/group-04/team-02/
-```
-
-Inside each team folder, implementations should be organized by topic.
-
-Example:
-
-```text
-team-03/
-├── linked-lists/
-├── stacks/
-├── queues/
-├── circular-arrays/
-└── dynamic-arrays/
-```
-
-## Branch Strategy
-
-The `main` branch represents the official state of the repository.
-
-Students must not work directly on `main`.
-
-Each contribution must be developed in a dedicated branch using this convention:
-
-```text
-gXX/team-YY/topic
-```
-
-Examples:
-
-```text
-g02/team-03/linked-list
-g02/team-05/stack
-g04/team-02/queue
-g04/team-07/dynamic-array
-```
-
-Each contribution must be submitted through a Pull Request into `main`.
-
-## Programming Language
-
-The primary programming language for the course is Java.
-
-Other programming languages may occasionally be used for comparison or demonstration.
-
-## Academic Integrity
-
-Students may collaborate within their assigned teams.
-
-Each team is responsible for the originality of its implementations.
-
-Students must not:
-
-* copy code from another team;
-* submit instructor implementations as their own;
-* modify another team's directory;
-* modify instructor code unless explicitly instructed.
-
-## Contribution Guide
-
-Before contributing, read:
-
-```text
-CONTRIBUTING.md
-```
-
-## Instructor
-
-Sebastián Yepes García
-Data Structures
-Universidad Nacional de Colombia
-
+Only change your own individual folder or your assigned team's folder unless the instructor explicitly authorizes another contribution. Keep credentials, student identification numbers, grades, and other private information out of submissions. Code in a public repository is visible to others; assignment publication timing follows the instructor's instructions.

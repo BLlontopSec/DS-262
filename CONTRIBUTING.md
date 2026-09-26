@@ -1,249 +1,156 @@
-# Contributing to DS-262
+# Student contribution guide
 
-All student contributions must follow the workflow described below.
+## 1. Choose the correct destination
 
-## 1. Clone the Repository
+| Work | DS3 — Group 03 | DS4 — Group 04 |
+| --- | --- | --- |
+| Individual | `DS3/individual/YOUR-USERNAME/` | `DS4/individual/YOUR-USERNAME/` |
+| Team labs | `DS3/teams/team-NN/labs/` | `DS4/teams/team-NN/labs/` |
+| Team projects | `DS3/teams/team-NN/projects/` | `DS4/teams/team-NN/projects/` |
 
-Clone the repository using SSH:
+Replace `YOUR-USERNAME` with your GitHub username and `team-NN` with the instructor-assigned team number, such as `team-01`. Keep these names stable. Teams in different course groups can have the same number. Use lowercase names with hyphens for assignment folders, using the assignment identifier given by the instructor.
+
+Create your individual folder yourself in your first pull request. Include a `README.md` with your GitHub username, course group, and an index of your submissions. For a team folder, one member submits the initial pull request with a `README.md` listing the assigned team number, members' GitHub usernames, and an index of labs and projects. Other members use that same team folder after it is merged.
+
+Git tracks files, not empty folders. Create a folder with its README or source files when you need it.
+
+## 2. One-time setup: fork and clone
+
+Open [the course repository](https://github.com/byepesg/DS-262) and create a fork under your own GitHub account. Clone **your fork**. Replace `YOUR-USERNAME` before running:
 
 ```bash
-git clone git@github.com:byepesg/DS-262.git
-```
-
-Enter the repository:
-
-```bash
+git clone https://github.com/YOUR-USERNAME/DS-262.git
 cd DS-262
+git remote add upstream https://github.com/byepesg/DS-262.git
+git remote -v
 ```
 
-## 2. Start from `main`
+`origin` is your fork, where you push your branches. `upstream` is the instructor's repository, where accepted contributions are merged. Authenticate to GitHub with your configured credential manager, GitHub CLI, or SSH setup when pushing; never put credentials in a repository file.
 
-Before starting a new contribution:
+## 3. Start every new contribution from the current course version
+
+Finish and commit any work on your existing branch before switching branches. Then:
 
 ```bash
-git checkout main
-git pull origin main
+git switch main
+git fetch upstream
+git merge --ff-only upstream/main
+git push origin main
 ```
 
-This ensures that your local repository contains the most recent changes.
+Keep your fork's `main` branch for synchronization. If the fast-forward merge fails, stop and ask for help; do not force-push or discard your work.
 
-## 3. Create a Branch
-
-Do not work directly on `main`.
-
-Create a branch using:
-
-```text
-gXX/team-YY/topic
-```
-
-Where:
-
-* `g02` corresponds to Group 02.
-* `g04` corresponds to Group 04.
-* `team-YY` corresponds to your assigned team.
-* `topic` describes the implementation.
-
-Examples:
-
-```text
-g02/team-03/linked-list
-g02/team-03/stack
-g04/team-07/queue
-g04/team-07/dynamic-array
-```
-
-Example command:
+Create a branch for one focused contribution. Examples:
 
 ```bash
-git checkout -b g04/team-07/dynamic-array
+git switch -c ds3/individual/YOUR-USERNAME/linked-lists
 ```
 
-## 4. Work Only Inside Your Team Folder
+For team work, use a branch such as `ds4/team-01/lab-01`. Branch names use lowercase `ds3` or `ds4`; folder names use uppercase `DS3` or `DS4`.
 
-Students from Group 02 must work under:
+## 4. Add code and documentation
 
-```text
-implementations/students/group-02/
-```
-
-Students from Group 04 must work under:
+An individual exercise might contain:
 
 ```text
-implementations/students/group-04/
-```
-
-For example:
-
-```text
-implementations/students/group-04/team-07/
-```
-
-A recommended structure is:
-
-```text
-team-07/
-├── linked-lists/
-├── stacks/
-├── queues/
-├── circular-arrays/
-└── dynamic-arrays/
-```
-
-Students must not modify:
-
-```text
-implementations/instructor/
-```
-
-unless explicitly instructed.
-
-Students must not modify another team's directory.
-
-## 5. Add Your Implementation
-
-For example:
-
-```text
-implementations/students/group-04/team-07/linked-lists/
+DS3/individual/YOUR-USERNAME/exercises/linked-lists/
+├── README.md
 ├── SinglyLinkedList.java
-├── Main.java
-└── README.md
+└── Main.java
 ```
 
-When appropriate, the topic `README.md` should include:
+A team submission might contain:
 
-* names of team members;
-* data structure implemented;
-* supported operations;
-* time complexity;
-* implementation notes.
+```text
+DS4/teams/team-01/labs/lab-01/
+├── README.md
+├── src/
+└── tests/
+```
 
-## 6. Review Your Changes
+Each exercise, lab, or project README must explain:
 
-Before committing:
+- Assignment identifier and what is implemented.
+- Author's GitHub username, or team members and each person's contribution.
+- Required Java version and exact commands to compile and run from that submission's folder.
+- How to run tests or reproducible examples, with expected results.
+- Relevant operation time complexities and the assumptions behind them.
+- Known limitations and references, including assistance disclosures required by the course.
+
+Use the assignment's requested structure and tools. For a simple Java exercise without packages, a README could provide:
+
+```bash
+javac -d out SinglyLinkedList.java Main.java
+java -cp out Main
+```
+
+Adapt these commands to your actual files. Test normal behavior and relevant edge cases, such as an empty structure, one element, or invalid operations. Do not submit generated `.class` files or build directories.
+
+## 5. Review, commit, and push
+
+For an individual DS3 exercise, replace the username and use:
 
 ```bash
 git status
-```
-
-Review differences:
-
-```bash
 git diff
+git add DS3/individual/YOUR-USERNAME/exercises/linked-lists/
+git diff --cached
+git commit -m "feat(ds3): implement linked list exercise"
+git push -u origin ds3/individual/YOUR-USERNAME/linked-lists
 ```
 
-## 7. Stage Your Files
+For an initial folder setup, stage your new personal README instead. For team work, stage only the relevant team submission and push your team-work branch. Check the staged diff so unrelated changes do not enter your commit.
 
-Add only your team's contribution.
+## 6. Open a pull request to the course repository
 
-Example:
+On GitHub, open a pull request with:
+
+- **Base repository:** `byepesg/DS-262`.
+- **Base branch:** `main`.
+- **Head repository:** your fork.
+- **Compare branch:** your contribution branch.
+
+Use a title such as `[DS3][Individual][YOUR-USERNAME] Linked lists` or `[DS4][team-01] Lab 01`. Fill out the pull request template, including what changed and how you checked it. Inspect the Files changed view before submitting. Use a draft pull request when you want early feedback on unfinished work; mark it ready for review when complete.
+
+A push to your fork alone is not a submission to the course repository. Share the pull request link through the course's designated submission channel if the assignment requires it. Deadlines and grading criteria come from the assignment.
+
+## 7. Respond to review
+
+Make requested corrections on the same branch, run the relevant checks again, then:
 
 ```bash
-git add implementations/students/group-04/team-07/
-```
-
-Avoid staging unrelated files.
-
-## 8. Commit
-
-Use descriptive commits.
-
-Recommended convention:
-
-```text
-feat(gXX-teamYY): description
-```
-
-Example:
-
-```bash
-git commit -m "feat(g04-team07): implement singly linked list"
-```
-
-Other examples:
-
-```text
-feat(g02-team03): implement stack
-fix(g04-team07): correct dequeue operation
-docs(g02-team05): document dynamic array complexity
-```
-
-## 9. Push Your Branch
-
-Example:
-
-```bash
-git push -u origin g04/team-07/dynamic-array
-```
-
-## 10. Create a Pull Request
-
-Open the repository on GitHub.
-
-Create a Pull Request from your branch into:
-
-```text
-main
-```
-
-For example:
-
-```text
-g04/team-07/dynamic-array
-            ↓
-       Pull Request
-            ↓
-           main
-```
-
-The Pull Request should include:
-
-* course group;
-* team number;
-* topic implemented;
-* brief description of the implementation;
-* known limitations, if any.
-
-## 11. Review Process
-
-The instructor may:
-
-* approve the Pull Request;
-* request changes;
-* leave comments;
-* reject the Pull Request if repository rules are not followed.
-
-If changes are requested, continue working on the same branch.
-
-Then:
-
-```bash
-git add ...
-git commit -m "fix(g04-team07): address review comments"
+git add DS3/individual/YOUR-USERNAME/exercises/linked-lists/
+git commit -m "fix(ds3): address linked list review feedback"
 git push
 ```
 
-The existing Pull Request will update automatically.
+Adapt the path for your submission. The existing pull request updates automatically. Reply to feedback with what you changed or a concrete question. The instructor decides whether to merge; students do not merge into the course repository themselves.
 
-## Repository Rules
-
-Do not:
-
-* push directly to `main`;
-* modify another team's folder;
-* modify instructor implementations;
-* delete unrelated files;
-* commit compiled Java files;
-* upload credentials, passwords, API keys, or tokens.
-
-## Before Submitting
-
-Always run:
+If your branch needs updates from the course repository, commit your current work first, stay on your contribution branch, and run:
 
 ```bash
-git status
+git fetch upstream
+git merge upstream/main
 ```
 
-Make sure the contribution contains only the intended files before pushing.
+If there are conflicts, resolve each affected file deliberately, stage the resolved files, and commit the merge before pushing. Ask for help if a conflict involves another student's work; do not overwrite their changes. Run your checks again after resolving conflicts.
 
+After your pull request is merged, repeat step 3 and create a **new branch** for the next contribution.
+
+## 8. Collaborate as a team
+
+Every member keeps their own fork and contributes to the same assigned team directory in the course repository. Divide work into focused tasks and agree who changes which files. Each member can submit their own pull request for their part; a single member should not be the permanent uploader for everyone.
+
+For a beginner-friendly workflow, first merge the team setup pull request. Then each teammate synchronizes from `upstream/main` and creates a branch for their task. When one task depends on another, wait for the prerequisite to merge, synchronize again, and start the dependent task. This avoids needing write access to another student's fork.
+
+Review teammates' pull requests and record contributions in the submission README. A joint deliverable may have several pull requests. If you pair-program, document both contributors and their roles. Avoid duplicate pull requests containing the same code.
+
+## Before requesting review
+
+- The contribution is in the correct course group and individual or team folder.
+- Only intended files changed; no other student's work or instructor files were modified.
+- Code runs and the README includes reproducible checks and actual results.
+- Authors, references, and known limitations are documented.
+- No credentials, personal student records, or compiled output are included.
+
+Further reading: [GitHub's contribution workflow](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
