@@ -1,32 +1,32 @@
-# Student contribution guide
+# Guía de contribución para estudiantes
 
-First time using Git? Follow the [beginner Git and GitHub guide in Spanish](docs/git-guide.md) for setup and explained commands.
+Si es tu primera vez usando Git, consulta la [guía introductoria de Git y GitHub](docs/git-guide.md), que explica la configuración y los comandos paso a paso.
 
-## Before starting: read the task instructions
+## Antes de comenzar: lee las instrucciones de la tarea
 
-Open the [assignment index](assignments/README.md), select the task assigned by your instructor, and read its requirements, deadline, deliverables, destination folder, and evaluation criteria. Only published tasks are assignments; the template is not a submission request. Follow the task's specific requirements together with this Git workflow. If they appear inconsistent, ask the instructor before proceeding.
+Abre el [índice de actividades](assignments/README.md), selecciona la tarea asignada por el docente y lee sus requisitos, fecha límite, entregables, carpeta de destino y criterios de evaluación. Solo las actividades publicadas constituyen tareas; la plantilla no es una solicitud de entrega. Sigue los requisitos específicos de la tarea junto con este flujo de Git. Si encuentras contradicciones, consulta al docente antes de continuar.
 
-Task-specific submission formats take precedence over the generic README requirements below. For Quiz 03, the submission README contains only the Java version and compile/run instructions; authorship belongs in the team README and pull request, and analysis belongs in `analysis.pdf`.
+El formato de entrega de cada tarea tiene prioridad sobre los requisitos generales del README que aparecen más adelante. Para el Quiz 03, el README de la entrega contiene únicamente la versión de Java y las instrucciones de compilación y ejecución; la autoría se documenta en el README del equipo y en el pull request, y el análisis se presenta en `analysis.pdf`.
 
-Include the assignment identifier and a link to its instructions in your pull request. Do not modify files under `assignments/` unless explicitly authorized by the instructor.
+Incluye el identificador de la tarea y un enlace a sus instrucciones en tu pull request. No modifiques archivos de `assignments/` sin autorización expresa del docente.
 
-## 1. Choose the correct destination
+## 1. Elige la carpeta correcta
 
-| Work | DS3 — Group 03 | DS4 — Group 04 |
+| Trabajo | DS3 — Grupo 03 | DS4 — Grupo 04 |
 | --- | --- | --- |
 | Individual | `DS3/individual/YOUR-USERNAME/` | `DS4/individual/YOUR-USERNAME/` |
-| Team labs | `DS3/teams/team-NN/labs/` | `DS4/teams/team-NN/labs/` |
-| Team projects | `DS3/teams/team-NN/projects/` | `DS4/teams/team-NN/projects/` |
+| Laboratorios en equipo | `DS3/teams/team-NN/labs/` | `DS4/teams/team-NN/labs/` |
+| Proyectos en equipo | `DS3/teams/team-NN/projects/` | `DS4/teams/team-NN/projects/` |
 
-Replace `YOUR-USERNAME` with your GitHub username and `team-NN` with the instructor-assigned team number, such as `team-01`. Keep these names stable. Teams in different course groups can have the same number. Use lowercase names with hyphens for assignment folders, using the assignment identifier given by the instructor.
+Reemplaza `YOUR-USERNAME` por tu usuario de GitHub y `team-NN` por el número de equipo asignado por el docente, por ejemplo, `team-01`. Conserva esos nombres durante el curso. Los equipos de distintos grupos pueden tener el mismo número. Para las carpetas de actividades, usa nombres en minúsculas con guiones y el identificador indicado por el docente.
 
-Create your individual folder yourself in your first pull request. Include a `README.md` with your GitHub username, course group, and an index of your submissions. For a team folder, one member submits the initial pull request with a `README.md` listing the assigned team number, members' GitHub usernames, and an index of labs and projects. Other members use that same team folder after it is merged.
+Crea tu carpeta individual en tu primer pull request. Incluye un `README.md` con tu usuario de GitHub, grupo del curso e índice de entregas. Para crear una carpeta de equipo, un integrante presenta el pull request inicial con un `README.md` que indique el número de equipo, los usuarios de GitHub de sus integrantes y un índice de laboratorios y proyectos. Después de que se integre ese PR, los demás integrantes utilizan la misma carpeta.
 
-Git tracks files, not empty folders. Create a folder with its README or source files when you need it.
+Git registra archivos, no carpetas vacías. Crea cada carpeta con su README o sus archivos fuente cuando la necesites.
 
-## 2. One-time setup: fork and clone
+## 2. Configuración inicial: fork y clone
 
-Open [the course repository](https://github.com/byepesg/DS-262) and create a fork under your own GitHub account. Clone **your fork**. Replace `YOUR-USERNAME` before running:
+Abre el [repositorio del curso](https://github.com/byepesg/DS-262) y crea un fork en tu propia cuenta de GitHub. Clona **tu fork**. Reemplaza `YOUR-USERNAME` antes de ejecutar:
 
 ```bash
 git clone https://github.com/YOUR-USERNAME/DS-262.git
@@ -35,11 +35,11 @@ git remote add upstream https://github.com/byepesg/DS-262.git
 git remote -v
 ```
 
-`origin` is your fork, where you push your branches. `upstream` is the instructor's repository, where accepted contributions are merged. Authenticate to GitHub with your configured credential manager, GitHub CLI, or SSH setup when pushing; never put credentials in a repository file.
+`origin` es tu fork, donde subes tus ramas. `upstream` es el repositorio del docente, donde se integran las contribuciones aceptadas. Para hacer push, autentícate mediante tu gestor de credenciales, GitHub CLI o tu configuración SSH; nunca guardes credenciales en un archivo del repositorio.
 
-## 3. Start every new contribution from the current course version
+## 3. Comienza cada contribución desde la versión actual del curso
 
-Finish and commit any work on your existing branch before switching branches. Then:
+Termina y registra con un commit el trabajo pendiente en tu rama actual antes de cambiar de rama. Después ejecuta:
 
 ```bash
 git switch main
@@ -48,19 +48,19 @@ git merge --ff-only upstream/main
 git push origin main
 ```
 
-Keep your fork's `main` branch for synchronization. If the fast-forward merge fails, stop and ask for help; do not force-push or discard your work.
+Reserva la rama `main` de tu fork para la sincronización. Si falla la integración por avance rápido, detente y pide ayuda; no fuerces el push ni descartes tu trabajo.
 
-Create a branch for one focused contribution. Examples:
+Crea una rama para una contribución concreta. Por ejemplo:
 
 ```bash
 git switch -c ds3/individual/YOUR-USERNAME/linked-lists
 ```
 
-For team work, use a branch such as `ds4/team-01/lab-01`. Branch names use lowercase `ds3` or `ds4`; folder names use uppercase `DS3` or `DS4`.
+Para trabajo en equipo, usa una rama como `ds4/team-01/lab-01`. Los nombres de ramas usan `ds3` o `ds4` en minúsculas; los nombres de carpetas usan `DS3` o `DS4` en mayúsculas.
 
-## 4. Add code and documentation
+## 4. Agrega el código y la documentación
 
-An individual exercise might contain:
+Un ejercicio individual puede contener:
 
 ```text
 DS3/individual/YOUR-USERNAME/exercises/linked-lists/
@@ -69,7 +69,7 @@ DS3/individual/YOUR-USERNAME/exercises/linked-lists/
 └── Main.java
 ```
 
-A team submission might contain:
+Una entrega en equipo puede contener:
 
 ```text
 DS4/teams/team-01/labs/lab-01/
@@ -78,27 +78,27 @@ DS4/teams/team-01/labs/lab-01/
 └── tests/
 ```
 
-Each exercise, lab, or project README must explain:
+Salvo que la tarea indique un formato específico, el README de cada ejercicio, laboratorio o proyecto debe explicar:
 
-- Assignment identifier and what is implemented.
-- Author's GitHub username, or team members and each person's contribution.
-- Required Java version and exact commands to compile and run from that submission's folder.
-- How to run tests or reproducible examples, with expected results.
-- Relevant operation time complexities and the assumptions behind them.
-- Known limitations and references, including assistance disclosures required by the course.
+- El identificador de la tarea y lo que se implementa.
+- El usuario de GitHub del autor, o los integrantes del equipo y el aporte de cada persona.
+- La versión de Java requerida y los comandos exactos para compilar y ejecutar desde la carpeta de la entrega.
+- Cómo ejecutar pruebas o ejemplos reproducibles, con sus resultados esperados.
+- Las complejidades temporales de las operaciones relevantes y los supuestos que las sustentan.
+- Las limitaciones conocidas y las referencias, incluidas las declaraciones de ayuda que exija el curso.
 
-Use the assignment's requested structure and tools. For a simple Java exercise without packages, a README could provide:
+Usa la estructura y las herramientas solicitadas en la tarea. Para un ejercicio sencillo de Java sin paquetes, el README podría incluir:
 
 ```bash
 javac -d out SinglyLinkedList.java Main.java
 java -cp out Main
 ```
 
-Adapt these commands to your actual files. Test normal behavior and relevant edge cases, such as an empty structure, one element, or invalid operations. Do not submit generated `.class` files or build directories.
+Adapta estos comandos a tus archivos reales. Comprueba el comportamiento normal y los casos límite relevantes, como una estructura vacía, un solo elemento u operaciones inválidas. No entregues archivos `.class` generados ni carpetas de compilación.
 
-## 5. Review, commit, and push
+## 5. Revisa los cambios, crea un commit y haz push
 
-For an individual DS3 exercise, replace the username and use:
+Para un ejercicio individual de DS3, reemplaza el usuario y ejecuta:
 
 ```bash
 git status
@@ -109,24 +109,24 @@ git commit -m "feat(ds3): implement linked list exercise"
 git push -u origin ds3/individual/YOUR-USERNAME/linked-lists
 ```
 
-For an initial folder setup, stage your new personal README instead. For team work, stage only the relevant team submission and push your team-work branch. Check the staged diff so unrelated changes do not enter your commit.
+Si estás creando tu carpeta inicial, selecciona tu nuevo README personal en lugar de la ruta del ejercicio. Para trabajo en equipo, selecciona únicamente la entrega correspondiente y sube la rama de ese trabajo. Revisa los cambios seleccionados con `git diff --cached` para evitar incluir modificaciones ajenas al objetivo del commit.
 
-## 6. Open a pull request to the course repository
+## 6. Abre un pull request al repositorio del curso
 
-On GitHub, open a pull request with:
+En GitHub, abre un pull request con estos valores:
 
-- **Base repository:** `byepesg/DS-262`.
-- **Base branch:** `main`.
-- **Head repository:** your fork.
-- **Compare branch:** your contribution branch.
+- **Base repository (repositorio de destino):** `byepesg/DS-262`.
+- **Base branch (rama de destino):** `main`.
+- **Head repository (repositorio de origen):** tu fork.
+- **Compare branch (rama que contiene los cambios):** tu rama de contribución.
 
-Use a title such as `[DS3][Individual][YOUR-USERNAME] Linked lists` or `[DS4][team-01] Lab 01`. Fill out the pull request template, including what changed and how you checked it. Inspect the Files changed view before submitting. Use a draft pull request when you want early feedback on unfinished work; mark it ready for review when complete.
+Usa un título como `[DS3][Individual][YOUR-USERNAME] Listas enlazadas` o `[DS4][team-01] Laboratorio 01`. Completa la plantilla del pull request indicando qué cambió y cómo lo comprobaste. Revisa la pestaña **Files changed** antes de enviarlo. Puedes abrir un pull request en borrador si necesitas comentarios sobre trabajo en desarrollo; márcalo como listo para revisión cuando esté completo.
 
-A push to your fork alone is not a submission to the course repository. Share the pull request link through the course's designated submission channel if the assignment requires it. Deadlines and grading criteria come from the assignment.
+Hacer push a tu fork no constituye por sí solo una entrega al repositorio del curso. Comparte el enlace del pull request por el canal de entrega establecido si la actividad lo exige. Las fechas límite y los criterios de calificación se encuentran en las instrucciones de la tarea.
 
-## 7. Respond to review
+## 7. Responde a la revisión
 
-Make requested corrections on the same branch, run the relevant checks again, then:
+Realiza las correcciones solicitadas en la misma rama, ejecuta nuevamente las comprobaciones pertinentes y después:
 
 ```bash
 git add DS3/individual/YOUR-USERNAME/exercises/linked-lists/
@@ -134,33 +134,33 @@ git commit -m "fix(ds3): address linked list review feedback"
 git push
 ```
 
-Adapt the path for your submission. The existing pull request updates automatically. Reply to feedback with what you changed or a concrete question. The instructor decides whether to merge; students do not merge into the course repository themselves.
+Adapta la ruta a tu entrega. El pull request existente se actualiza automáticamente. Responde a los comentarios explicando lo que cambiaste o formulando una pregunta concreta. El docente decide si integra la contribución; los estudiantes no hacen merge directamente en el repositorio del curso.
 
-If your branch needs updates from the course repository, commit your current work first, stay on your contribution branch, and run:
+Si tu rama necesita los cambios recientes del repositorio del curso, primero registra tu trabajo actual con un commit, permanece en tu rama de contribución y ejecuta:
 
 ```bash
 git fetch upstream
 git merge upstream/main
 ```
 
-If there are conflicts, resolve each affected file deliberately, stage the resolved files, and commit the merge before pushing. Ask for help if a conflict involves another student's work; do not overwrite their changes. Run your checks again after resolving conflicts.
+Si aparecen conflictos, revisa y resuelve cada archivo afectado, selecciona los archivos resueltos con `git add` y registra el merge con un commit antes de hacer push. Pide ayuda si el conflicto involucra trabajo de otro estudiante; no sobrescribas sus cambios. Vuelve a ejecutar tus comprobaciones después de resolver los conflictos.
 
-After your pull request is merged, repeat step 3 and create a **new branch** for the next contribution.
+Una vez integrado tu pull request, repite el paso 3 y crea una **rama nueva** para la siguiente contribución.
 
-## 8. Collaborate as a team
+## 8. Colabora con tu equipo
 
-Every member keeps their own fork and contributes to the same assigned team directory in the course repository. Divide work into focused tasks and agree who changes which files. Each member can submit their own pull request for their part; a single member should not be the permanent uploader for everyone.
+Cada integrante mantiene su propio fork y contribuye a la misma carpeta de equipo asignada en el repositorio del curso. Dividan el trabajo en tareas concretas y acuerden quién modifica cada archivo. Cada integrante puede presentar un pull request con su aporte; una sola persona no debería convertirse en quien siempre sube el trabajo de todos.
 
-For a beginner-friendly workflow, first merge the team setup pull request. Then each teammate synchronizes from `upstream/main` and creates a branch for their task. When one task depends on another, wait for the prerequisite to merge, synchronize again, and start the dependent task. This avoids needing write access to another student's fork.
+Para facilitar el inicio, esperen a que se integre el pull request que crea la carpeta del equipo. Después, cada integrante se sincroniza desde `upstream/main` y crea una rama para su tarea. Si una tarea depende de otra, esperen a que se integre la primera, sincronicen de nuevo y comiencen la tarea dependiente. Así no necesitan permisos de escritura en el fork de otro estudiante.
 
-Review teammates' pull requests and record contributions in the submission README. A joint deliverable may have several pull requests. If you pair-program, document both contributors and their roles. Avoid duplicate pull requests containing the same code.
+Revisen los pull requests de sus compañeros y documenten los aportes en el README de la entrega, salvo que la actividad exija otra ubicación, como ocurre en el Quiz 03. Una entrega conjunta puede tener varios pull requests de desarrollo; respeten las instrucciones de la tarea para la entrega final. Si programan en pareja, documenten ambos participantes y sus funciones. Eviten pull requests duplicados con el mismo código.
 
-## Before requesting review
+## Antes de solicitar revisión
 
-- The contribution is in the correct course group and individual or team folder.
-- Only intended files changed; no other student's work or instructor files were modified.
-- Code runs and the README includes reproducible checks and actual results.
-- Authors, references, and known limitations are documented.
-- No credentials, personal student records, or compiled output are included.
+- La contribución está en el grupo del curso correcto y en la carpeta individual o de equipo correspondiente.
+- Solo se modificaron los archivos previstos; no se alteró trabajo de otros estudiantes ni archivos del docente.
+- El código funciona y las comprobaciones reproducibles y sus resultados reales están documentados donde lo exige la tarea.
+- La autoría, las referencias y las limitaciones conocidas están documentadas en los lugares correspondientes.
+- No se incluyen credenciales, información personal de estudiantes ni archivos compilados.
 
-Further reading: [GitHub's contribution workflow](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
+Lectura complementaria: [flujo de contribución de GitHub](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project).
