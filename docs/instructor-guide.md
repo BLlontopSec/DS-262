@@ -26,7 +26,7 @@ GitHub settings have **not** been changed by adding this guide. See [GitHub's pr
 
 ## Recurring assignment cycle
 
-Publish the exercise or lab statement, including identifier, expected location, Java version, and checks. Students synchronize, create a branch, implement, test, and open a pull request. Encourage draft pull requests for substantive early questions. Review folder scope, correctness, complexity claims, tests, documentation, and attribution. Request changes on the existing pull request and merge once acceptable.
+Copy the [assignment template](../assignments/TEMPLATE.md) into `assignments/TASK-ID/README.md`, complete its requirements and evaluation criteria, and list the published task in the [assignment index](../assignments/README.md). Include the applicable groups, deadline, expected location, Java version, and checks. Use `exercises/` only for supplementary instructor resources and link them from the task. Students synchronize, create a branch, implement, test, and open a pull request. Encourage draft pull requests for substantive early questions. Review folder scope, correctness, complexity claims, tests, documentation, and attribution. Request changes on the existing pull request and merge once acceptable.
 
 For group work, encourage separate focused contributions from different members and peer review within the team. Avoid assigning multiple beginners simultaneous edits to the same files. Keep grading feedback and grades in the institution's designated private system.
 

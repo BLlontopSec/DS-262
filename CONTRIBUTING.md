@@ -1,5 +1,11 @@
 # Student contribution guide
 
+## Before starting: read the task instructions
+
+Open the [assignment index](assignments/README.md), select the task assigned by your instructor, and read its requirements, deadline, deliverables, destination folder, and evaluation criteria. Only published tasks are assignments; the template is not a submission request. Follow the task's specific requirements together with this Git workflow. If they appear inconsistent, ask the instructor before proceeding.
+
+Include the assignment identifier and a link to its instructions in your pull request. Do not modify files under `assignments/` unless explicitly authorized by the instructor.
+
 ## 1. Choose the correct destination
 
 | Work | DS3 — Group 03 | DS4 — Group 04 |

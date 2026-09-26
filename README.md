@@ -37,17 +37,18 @@ DS-262/
 │           ├── labs/
 │           └── projects/
 ├── implementations/instructor/
+├── assignments/
 ├── exercises/
 ├── docs/
 ├── README.md
 └── CONTRIBUTING.md
 ```
 
-The root `exercises/` folder is for instructor assignment statements. Student solutions belong in `DS3/` or `DS4/`. Shared reference implementations stay in `implementations/instructor/`; supporting course material stays in `docs/`.
+Read [assignment instructions](assignments/README.md) for each task before starting. The root `assignments/` folder contains task requirements; the root `exercises/` folder is reserved for supplementary instructor exercise resources. Student solutions belong in `DS3/` or `DS4/`. Shared reference implementations stay in `implementations/instructor/`; supporting course material stays in `docs/`.
 
 ## How contributions work
 
-1. Fork the course repository and clone your fork.
+1. Read the relevant [assignment instructions](assignments/README.md), then fork the course repository and clone your fork.
 2. Synchronize with the course repository before each new contribution.
 3. Create a branch for one exercise, lab, project milestone, or improvement.
 4. Work in your individual folder or your assigned team's folder.
