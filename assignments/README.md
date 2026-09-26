@@ -6,7 +6,7 @@ Start here before making an assignment contribution. This is the shared source o
 
 | Task | Course groups | Work type | Deadline |
 | --- | --- | --- | --- |
-| [Quiz 03 — Dynamic Arrays and Amortized Analysis](quiz-03/README.md) | DS3 and DS4 | Same teams as the course project | To be announced by the instructor |
+| [Quiz 03 — Dynamic Arrays and Amortized Analysis](quiz-03/README.md) | DS3 and DS4 | Same teams as the course project | Domingo 27 de septiembre de 2026, 23:59 — hora de Colombia (America/Bogota, UTC−5) |
 
 The [assignment template](TEMPLATE.md) is for instructor preparation; it is not an assigned task.
 

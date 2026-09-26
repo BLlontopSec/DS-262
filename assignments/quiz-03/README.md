@@ -12,7 +12,7 @@ Lean completo el [enunciado del quiz](quiz-03.pdf). Esta guía indica cómo orga
 | Equipo | Conservar integrantes y número de `team-NN`; no crear otro equipo para este quiz |
 | Entorno | Java 16 o superior |
 | Preparación y sustentación | El enunciado indica 10 horas de preparación y hasta 12 minutos de sustentación |
-| Fecha límite | Pendiente de anuncio del docente; la fecha del enunciado, 24 de septiembre de 2026, no se interpreta como fecha límite |
+| Fecha límite | **Domingo 27 de septiembre de 2026 a las 23:59**, hora de Colombia (America/Bogota, UTC−5), para DS3 y DS4. La fecha del enunciado, 24 de septiembre de 2026, no corresponde a la fecha límite |
 
 La entrega es conjunta por equipo. Cada integrante debe poder explicar y modificar la solución: el enunciado aplica un factor de sustentación por pregunta según la comprensión del estudiante. La entrega en equipo no elimina esta responsabilidad individual.
 
@@ -145,4 +145,4 @@ La sustentación contempla demostración y pruebas, representación e invariante
 
 ## Fuente y adaptación
 
-El [PDF adjunto](quiz-03.pdf) se conserva sin modificaciones. Esta guía añade la organización de entrega en GitHub y la indicación del docente de trabajar con los mismos equipos del proyecto. No añade una fecha límite ni cambia los puntajes del enunciado.
+El [PDF adjunto](quiz-03.pdf) se conserva sin modificaciones. Esta guía añade la organización de entrega en GitHub y la indicación del docente de trabajar con los mismos equipos del proyecto. La fecha límite fue establecida por el docente para el domingo 27 de septiembre de 2026 a las 23:59, hora de Colombia (America/Bogota, UTC−5). Los puntajes del enunciado no cambian.

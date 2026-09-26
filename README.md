@@ -18,7 +18,7 @@ Aquí los estudiantes de **DS3 (grupo 03)** y **DS4 (grupo 04)** entregan ejerci
 | --- | --- | --- | --- |
 | Quiz 03 — Dynamic Arrays and Amortized Analysis | DS3 y DS4 | Mismos integrantes y número de equipo del proyecto | [Guía de entrega y enunciado](assignments/quiz-03/README.md) |
 
-La fecha límite del Quiz 03 está pendiente de anuncio del docente. Consulta el [índice de actividades](assignments/README.md) para nuevas tareas y las instrucciones de cada actividad para sus requisitos vigentes.
+La fecha límite del Quiz 03 para DS3 y DS4 es el **domingo 27 de septiembre de 2026 a las 23:59, hora de Colombia (America/Bogota, UTC−5)**. Consulta el [índice de actividades](assignments/README.md) para nuevas tareas y las instrucciones de cada actividad para sus requisitos vigentes.
 
 ## Dónde guardar tu trabajo
 
