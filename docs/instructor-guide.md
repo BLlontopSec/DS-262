@@ -16,6 +16,12 @@ This supports sustained practice with Git and code review. Keep pull requests fo
 
 GitHub settings have **not** been changed by adding this guide. See [GitHub's protected branch documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
+## Student access and collaborator invitations
+
+For a public repository, students do not need collaborator invitations: they fork, push to their own forks, and submit pull requests. Share the repository link and the [beginner Git guide](git-guide.md). Add designated teaching staff only when they need repository permissions for their duties.
+
+For a private repository, grant the necessary access and verify that repository and organization policies allow forks before using this workflow. A `teams/team-NN/` directory is organizational structure, not a GitHub permission boundary. See [GitHub's fork documentation](https://docs.github.com/en/pull-requests/reference/forks).
+
 ## Suggested first session
 
 - Demonstrate fork, clone, `origin`, and `upstream` with one small example.

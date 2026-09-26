@@ -1,5 +1,7 @@
 # Student contribution guide
 
+First time using Git? Follow the [beginner Git and GitHub guide in Spanish](docs/git-guide.md) for setup and explained commands.
+
 ## Before starting: read the task instructions
 
 Open the [assignment index](assignments/README.md), select the task assigned by your instructor, and read its requirements, deadline, deliverables, destination folder, and evaluation criteria. Only published tasks are assignments; the template is not a submission request. Follow the task's specific requirements together with this Git workflow. If they appear inconsistent, ask the instructor before proceeding.
