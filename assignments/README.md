@@ -4,7 +4,11 @@ Start here before making an assignment contribution. This is the shared source o
 
 ## Published tasks
 
-No tasks have been published yet. The instructor will add links here as assignments are released. The [assignment template](TEMPLATE.md) is for instructor preparation; it is not an assigned task.
+| Task | Course groups | Work type | Deadline |
+| --- | --- | --- | --- |
+| [Quiz 03 — Dynamic Arrays and Amortized Analysis](quiz-03/README.md) | DS3 and DS4 | Same teams as the course project | To be announced by the instructor |
+
+The [assignment template](TEMPLATE.md) is for instructor preparation; it is not an assigned task.
 
 ## Student workflow
 
