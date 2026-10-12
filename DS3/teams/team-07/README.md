@@ -8,7 +8,7 @@ Equipo 07 del curso Estructuras de Datos (DS-262), semestre 2026-2.
 |---|
 | [@DfCastilloa](https://github.com/DfCastilloa) |
 | [@BLlontopSec](https://github.com/BLlontopSec) |
-| [@hoverwar](https://github.com/hoverwar) |
+| [@hoverwars](https://github.com/hoverwars) |
 
 ## Laboratorios
 

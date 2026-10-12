@@ -14,7 +14,7 @@ El proyecto se desarrolla en tres entregas incrementales. Esta carpeta contiene 
 |---|---|
 | [@DfCastilloa](https://github.com/DfCastilloa) | Por definir |
 | [@BLlontopSec](https://github.com/BLlontopSec) | Por definir |
-| [@hoverwar](https://github.com/hoverwar) | Por definir |
+| [@hoverwars](https://github.com/hoverwars) | Por definir |
 
 ## Estructuras de datos (Entrega 1)
 
