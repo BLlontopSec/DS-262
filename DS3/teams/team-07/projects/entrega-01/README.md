@@ -44,6 +44,10 @@ Operaciones de `CourseGroup`:
 - `leaveWaitlist(s)`: el estudiante retira su aceptación y sale de la lista, O(w).
 - `cancel(s)`: retira al estudiante, O(c), y pasa el cupo al primero de la lista de espera, O(1).
 
+## Documento técnico
+
+La fuente LaTeX del documento de la Entrega 1 está en [`docs/SISO-UNAL_Entrega1.tex`](docs/SISO-UNAL_Entrega1.tex) (plantilla IEEE; se compila con pdfLaTeX, por ejemplo en Overleaf). Es una versión preliminar y puede cambiar antes de la entrega.
+
 ## Requisitos
 
 - Java 17 o superior. Sin dependencias externas.
