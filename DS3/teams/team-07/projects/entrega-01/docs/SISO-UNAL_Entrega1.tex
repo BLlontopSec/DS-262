@@ -1,20 +1,13 @@
 \documentclass[conference]{IEEEtran}
 
 % =========================================================
-% SISO-UNAL — Proyecto Semestral, Entrega 1
-% Estructuras de Datos (DS3), UNAL Bogotá, 2026-2
-% Compilador recomendado: pdfLaTeX (Overleaf)
-% =========================================================
-% ANTES DE ENTREGAR, buscar "TODO" en este archivo:
-%   - correos institucionales de los integrantes;
-%   - verificar la Circular 13 de 2026 contra el texto oficial;
-%   - si el código cambia antes de entregar, actualizar "Estado de la implementación".
+% SISO-UNAL — Documento técnico, Entrega 1 (team-07, DS3)
+% Basado en la plantilla del curso. Compilador: pdfLaTeX.
 % =========================================================
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[spanish,es-nodecimaldot,es-tabla]{babel}
-\spanishdeactivate{<>} % evita conflictos de < y > con código y TikZ
+\usepackage[spanish,es-nodecimaldot,es-noshorthands,es-tabla]{babel}
 \usepackage{lmodern}
 \usepackage{microtype}
 
@@ -30,7 +23,7 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{tikz}
-\usetikzlibrary{arrows.meta,positioning,babel}
+\usetikzlibrary{positioning,arrows.meta}
 \usepackage{hyperref}
 
 \definecolor{CodeBackground}{HTML}{F4F6F7}
@@ -57,16 +50,16 @@
     frame=single,
     breaklines=true,
     showstringspaces=false,
-    tabsize=4
+    tabsize=4,
+    columns=fullflexible,
+    keepspaces=true
 }
 
 \lstset{
     style=paperstyle,
-    language=Java,
-    literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+    language=Java
 }
 
-% Nombres en español para el pseudocódigo
 \floatname{algorithm}{Algoritmo}
 \renewcommand{\algorithmicrequire}{\textbf{Entrada:}}
 \renewcommand{\algorithmicensure}{\textbf{Salida:}}
@@ -76,8 +69,8 @@
 % =========================================================
 
 \title{
-SISO-UNAL: Sistema de Apoyo a la Inscripción de Asignaturas de la UNAL con
-Lista de Espera por Prioridad, Sugerencia de Grupos y Reportes de Demanda
+SISO-UNAL: Gestión de cupos por prioridad en la inscripción de asignaturas de la Universidad Nacional de Colombia\\
+\large Proyecto semestral de Estructuras de Datos --- Entrega 1: propuesta, diseño e implementación inicial
 }
 
 \author{
@@ -87,11 +80,11 @@ Adrien Roho,
 Diego Fernando Castillo Albino
 }
 \IEEEauthorblockA{
-\textit{Universidad Nacional de Colombia}\\
-\textit{Sede Bogotá — Estructuras de Datos (DS3), 2026-2}\\
+\textit{Facultad de Ingeniería, Universidad Nacional de Colombia}\\
+\textit{Sede Bogotá}\\
 Bogotá D.C., Colombia\\
-% TODO: reemplazar por los correos institucionales reales
-\{TODO-correo-bryan, TODO-correo-adrien, TODO-correo-diego\}@unal.edu.co
+\{bllontop, aroho, dcastilloa\}@unal.edu.co\\
+Estructuras de Datos (DS3, grupo 03) --- team-07 --- 2026-2
 }
 }
 
@@ -99,201 +92,59 @@ Bogotá D.C., Colombia\\
 
 \maketitle
 
+
 % =========================================================
 % RESUMEN
 % =========================================================
 
 \begin{abstract}
-La inscripción de asignaturas en la Universidad Nacional de Colombia, sede
-Bogotá, involucra a cerca de 28\,700 estudiantes de pregrado que inscriben
-entre cuatro y cinco asignaturas cada uno. El acceso al Sistema de Información
-Académica (SIA) se organiza mediante citas asignadas según una jerarquía de
-prelación institucional; sin embargo, dentro de cada franja y durante el periodo
-de adiciones y cancelaciones, los cupos se asignan a quien completa primero la
-operación, sin considerar dicha prelación. Además, cuando un grupo está lleno,
-el estudiante debe buscar manualmente otro grupo sin cruce de horario, y la
-universidad no cuenta con información sobre la demanda insatisfecha. Este
-proyecto propone SISO-UNAL, un sistema en Java que aborda estos tres problemas:
-(i) una \emph{lista de espera por prioridad} por grupo que reasigna
-automáticamente cada cupo liberado al estudiante de mayor prioridad oficial que
-haya aceptado esa asignación, a diferencia de los sobrecupos, que crean cupos
-adicionales; (ii) la sugerencia de grupos alternativos sin cruce de horario; y
-(iii) reportes
-de demanda insatisfecha. La primera entrega implementa el núcleo del sistema, la
-lista de espera, con estructuras implementadas desde cero: una cola de prioridad
-sobre una lista enlazada ordenada, una lista enlazada para los inscritos, una
-cola FIFO para el orden de atención de una cita y una pila para deshacer
-acciones en el carrito de selección. La cola de prioridad se define mediante una
-interfaz, de modo que en las siguientes entregas pueda reemplazarse por un
-montículo (\emph{heap}). El prototipo actual, ejecutable por consola, demuestra
-la clasificación por grupos de prelación, el ordenamiento por prioridad, la
-lista de espera y la reasignación automática de un cupo liberado. La sugerencia
-de grupos y los reportes se desarrollarán en las entregas 2 y 3.
+En la sede Bogotá de la Universidad Nacional de Colombia, cerca de 28.700 estudiantes de pregrado inscriben asignaturas mediante citas ordenadas por prioridad institucional. Después de la cita, esa prioridad se pierde: cuando un grupo está lleno no hay lista de espera, y cada cupo que se libera en el periodo de adiciones lo obtiene quien recargue primero el sistema. El objetivo del proyecto es diseñar e implementar en Java un sistema, SISO-UNAL, que complemente las citas con listas de espera por prioridad y reasignación automática de los cupos liberados, y que más adelante sugiera grupos alternativos y genere reportes de demanda insatisfecha. La solución usa estructuras de datos propias: una cola de prioridad sobre lista enlazada ordenada para la lista de espera, una lista enlazada para los inscritos, una cola FIFO para la cita y una pila para el carrito con deshacer. Cada estructura se usa a través de una interfaz para reemplazarla en las siguientes entregas por montículos, árboles, tablas hash y grafos. En esta primera entrega están implementadas la clasificación por prioridad, la inscripción con control de cupo, la lista de espera con aceptación previa del estudiante y la reasignación automática al cancelar.
 \end{abstract}
 
 \begin{IEEEkeywords}
-estructuras de datos, colas de prioridad, listas enlazadas, asignación de
-cupos, inscripción académica, análisis de complejidad
+estructuras de datos, colas de prioridad, listas de espera, asignación de cupos, inscripción académica
 \end{IEEEkeywords}
 
 % =========================================================
-% 1. INTRODUCCIÓN Y PLANTEAMIENTO DEL PROBLEMA
+% 1. INTRODUCCIÓN
 % =========================================================
 
 \section{Introducción y planteamiento del problema}
 
 \subsection{Contexto}
+La sede Bogotá de la Universidad Nacional de Colombia (UNAL) tiene 32.090 estudiantes matriculados, de los cuales 28.700 son de pregrado~\cite{unal-cifras}. La Facultad de Ingeniería reúne cerca del 29\,\% (unos 8.320 estudiantes). Cada estudiante inscribe entre cuatro y cinco asignaturas, es decir, entre 115.000 y 143.500 inscripciones por semestre.
 
-En la sede Bogotá de la Universidad Nacional de Colombia (UNAL) hay alrededor de
-32\,090 estudiantes matriculados, de los cuales aproximadamente 28\,700 son de
-pregrado~\cite{unal-cifras}. Cada semestre, estos estudiantes inscriben sus
-asignaturas a través del SIA. Para distribuir la carga sobre la plataforma, la
-universidad no abre la inscripción a todos al mismo tiempo: asigna a cada
-estudiante una \emph{cita}, es decir, una franja de 30 minutos dentro de una
-ventana de tres días, a partir de la cual puede inscribir.
-
-A partir del periodo 2026-2S, el orden de las citas se rige por la Circular 13
-de 2026 de la Vicerrectoría Académica~\cite{circular13}, que define cuatro grupos
-de prelación excluyentes: (1)~estudiantes en situación de discapacidad;
-(2)~estudiantes en vulnerabilidad académica o riesgo de abandono (por ejemplo,
-PAPA menor o igual a 3.1, o programas especiales como PEAMA); (3)~estudiantes
-con avance curricular igual o superior al 80\,\%, ordenados por avance; y
-(4)~los demás estudiantes, ordenados mediante el Índice de Prioridad de
-Asignación (IPA).
-
-El calendario de inscripción tiene cinco fases~\cite{dninfoa}: (1)~consulta de
-la citación, que asigna a cada estudiante un día y una hora según su grupo de
-prelación; (2)~primera cita de inscripción en el SIA, en los días previos al
-inicio de clases; (3)~adiciones y cancelaciones libres durante las semanas 1 y 2
-del semestre, con una segunda franja de acceso general y sin pérdida de
-créditos; (4)~cancelación ordinaria entre las semanas 3 y 8, en la que solo se
-puede cancelar y los créditos se pierden; y (5)~un periodo extemporáneo, desde
-la semana 9, en el que la cancelación requiere una solicitud aprobada por el
-Comité Asesor de Carrera y el Consejo de Facultad.
-
-La Tabla~\ref{tab:facultades} muestra la distribución aproximada de los
-estudiantes de pregrado por facultad. La Facultad de Ingeniería concentra
-cerca del 29\,\% del pregrado y, además, varias asignaturas (cálculo, inglés,
-asignaturas de libre elección) son compartidas entre facultades, lo que genera
-una alta competencia por los mismos grupos.
-
-\begin{table}[t]
-\centering
-\caption{Distribución aproximada del pregrado por facultad, sede Bogotá}
-\label{tab:facultades}
-\begin{tabular}{@{}lrr@{}}
-\toprule
-Facultad & Estudiantes & \% \\
-\midrule
-Ingeniería & 8\,320 & 29.0 \\
-Ciencias Humanas & 4\,880 & 17.0 \\
-Ciencias & 3\,440 & 12.0 \\
-Medicina & 2\,580 & 9.0 \\
-Artes & 2\,300 & 8.0 \\
-Ciencias Económicas & 2\,010 & 7.0 \\
-Derecho, C. Políticas y Sociales & 1\,720 & 6.0 \\
-Ciencias Agrarias & 1\,000 & 3.5 \\
-Medicina Veterinaria y Zootecnia & 860 & 3.0 \\
-Enfermería & 860 & 3.0 \\
-Odontología & 730 & 2.5 \\
-\midrule
-\textbf{Total} & \textbf{28\,700} & \textbf{100.0} \\
-\bottomrule
-\end{tabular}
-\end{table}
+La inscripción se hace en el Sistema de Información Académica (SIA) y tiene cinco fases~\cite{dninfoa}: (1) consulta de la citación, que asigna a cada estudiante un día y una hora; (2) primera cita de inscripción; (3) adiciones y cancelaciones libres, en las semanas 1 y 2; (4) cancelación ordinaria, de la semana 3 a la 8, con pérdida de créditos y sin posibilidad de inscribir; y (5) cancelación extemporánea, por solicitud ante la facultad. El orden de las citas sigue cuatro grupos de prelación~\cite{circular13}: (1) discapacidad; (2) vulnerabilidad académica, por ejemplo PAPA $\leq 3{,}1$; (3) avance curricular de al menos el 80\,\%; y (4) los demás, ordenados por el Índice de Prioridad de Asignación (IPA).
 
 \subsection{Situación que se desea resolver}
+Las citas deciden \emph{cuándo} entra cada estudiante, pero la prioridad deja de tener efecto después:
+\begin{itemize}
+    \item Cuando un grupo está lleno no hay lista de espera. En las adiciones (fase 3), cada cupo liberado lo obtiene quien recargue el SIA en ese momento, sin importar su prioridad.
+    \item Si el grupo deseado está lleno, el estudiante debe buscar a mano otro grupo de la misma asignatura que no le cruce el horario.
+    \item La universidad no sabe cuántos estudiantes quedaron sin una asignatura ni qué grupos tuvieron más demanda.
+\end{itemize}
+El problema es mayor en las asignaturas que comparten varias facultades (cálculo, inglés, libre elección) y en Ingeniería, por su tamaño.
 
-El sistema de citas resuelve \emph{quién entra primero}, pero deja sin resolver
-los siguientes problemas:
-
-\begin{enumerate}
-\item \textbf{Cupos liberados sin prioridad.} Durante el periodo de adiciones y
-cancelaciones (fase 3, semanas 1 y 2 del semestre), cuando un
-estudiante cancela, el cupo liberado lo toma quien primero recarga el SIA. Lo
-mismo ocurre dentro de cada franja, compartida por cientos de estudiantes. No
-existe una lista de espera que asigne los cupos según la prioridad
-institucional.
-\item \textbf{Grupos llenos sin alternativas.} Si el grupo deseado está lleno, el
-estudiante debe buscar manualmente otro grupo de la misma asignatura que tenga
-cupo y no le genere cruce de horario con lo que ya inscribió.
-\item \textbf{Demanda insatisfecha desconocida.} No se registra cuántos
-estudiantes quedaron sin cupo en cada asignatura ni cuáles asignaturas tienen más
-estudiantes en espera, información útil para planear la oferta de semestres
-futuros. Además, en el periodo de cancelación ordinaria (fase 4, semanas 3 a
-8), en el que ya no se permiten inscripciones, los cupos liberados se pierden sin
-que quede registro.
-\end{enumerate}
+Existe además el \emph{sobrecupo}: cuando un grupo está en cero, el estudiante puede pedir un cupo adicional, que el docente o el Comité Asesor de Carrera aprueba caso por caso según el salón y la necesidad del estudiante. El sobrecupo es un mecanismo complementario que no afecta directamente este proyecto: crea cupos por excepción mediante un trámite manual, mientras que SISO-UNAL reasigna los cupos regulares que ya existen y se liberan.
 
 \subsection{Relevancia}
-
-El problema afecta a toda la población de pregrado en cada periodo académico.
-Que un cupo dependa de la velocidad de conexión o de recargar la página en el
-momento exacto contradice el objetivo de equidad de la propia
-Circular~13~\cite{circular13}. Además, las asignaturas obligatorias de los
-primeros semestres y las compartidas entre facultades son precisamente las que
-determinan el avance de los estudiantes.
+El problema afecta a todo el pregrado cada semestre. Asignar cupos según la velocidad de conexión contradice la equidad que la universidad aplica en las citas y obliga a los estudiantes a vigilar el SIA durante días. Además, sin un registro de la demanda insatisfecha es difícil planear cuántos grupos abrir.
 
 \subsection{Dificultades computacionales}
-
 \begin{itemize}
-\item \textbf{Escala.} Entre 115\,000 y 143\,000 solicitudes de inscripción
-($28\,700 \times 4$--$5$) en pocos días. Una operación $O(n)$ repetida por cada
-solicitud puede volverse costosa.
-\item \textbf{Orden total de prioridad.} Hay que ordenar a 28\,700 estudiantes
-según un criterio compuesto (grupo de prelación y puntaje dentro del grupo). Con
-una lista ordenada esto cuesta $O(n^2)$ en el peor caso, del orden de
-$8.2\times10^{8}$ comparaciones; con un montículo, $O(n\log n)$, del orden de
-$4.2\times10^{5}$.
-\item \textbf{Extracción repetida del máximo.} Cada cupo liberado exige obtener
-al estudiante de mayor prioridad en espera; la estructura debe soportar inserción
-y extracción eficientes.
-\item \textbf{Consistencia.} Un estudiante puede estar en la lista de espera de
-varios grupos de la misma asignatura; al obtener uno, debe salir de los demás.
-\item \textbf{Cruces de horario.} Sugerir un grupo alternativo exige comparar su
-horario con todos los grupos ya inscritos por el estudiante.
+    \item \textbf{Escala:} decenas de miles de estudiantes y más de cien mil inscripciones en pocos días.
+    \item \textbf{Orden por prioridad:} los estudiantes llegan a la espera en cualquier orden, pero deben salir según su prioridad, lo que exige una cola de prioridad eficiente.
+    \item \textbf{Horarios:} un cupo solo puede asignarse a quien no tenga cruce de horario.
+    \item \textbf{Consistencia:} un estudiante puede esperar en varios grupos de la misma asignatura y, al recibir cupo en uno, debe salir de los demás.
 \end{itemize}
 
 \subsection{Propuesta general}
-
-SISO-UNAL no reemplaza el sistema de citas: lo simula y lo complementa con tres
-funciones: (i) una lista de espera por prioridad por grupo, que reasigna
-automáticamente cada cupo liberado al estudiante de mayor prioridad oficial,
-siempre que este haya aceptado previamente la asignación automática;
-(ii) la sugerencia de grupos alternativos sin cruce de horario cuando el grupo
-deseado está lleno; y (iii) reportes de demanda insatisfecha y de asignaturas con
-más estudiantes en espera. La primera entrega implementa la función~(i), que es
-el núcleo del sistema; las funciones~(ii) y~(iii) se desarrollan en las entregas
-2 y 3.
-
-\subsection{Diferencia con los sobrecupos}
-
-La UNAL contempla \emph{sobrecupos}: autorizaciones para inscribir a un
-estudiante por encima del cupo de un grupo. Se solicitan durante la inscripción y
-las adiciones, cuando el cupo regular del grupo aparece en cero. El trámite
-depende de cada facultad: un módulo de solicitudes en el SIA, formularios
-internos o un correo directo al docente. El docente o el Comité Asesor de Carrera
-evalúan la capacidad física del salón y la justificación del estudiante, con
-preferencia para quienes necesitan la asignatura para graduarse o para no
-retrasar su plan de estudios. Si se aprueba, la secretaría académica inscribe la
-asignatura manualmente o habilita un cupo exclusivo para el estudiante, quien en
-todo caso debe tener créditos disponibles.
-% TODO: citar una fuente oficial del trámite de sobrecupos, si existe.
-
-Los sobrecupos son un mecanismo complementario que no afecta directamente al
-proyecto: SISO-UNAL trabaja únicamente sobre los cupos regulares de cada grupo, y
-un sobrecupo aprobado simplemente aumenta el cupo de ese grupo sin cambiar el
-funcionamiento de la lista de espera. Por eso no se modelan. Aun así, los
-sobrecupos atenúan el problema solo parcialmente. Crean cupos adicionales
-limitados por el salón y la carga docente; el trámite es manual, varía entre
-facultades y se resuelve caso por caso; y sus criterios no siguen necesariamente
-el orden de prelación de la Circular~13. Sobre todo, no resuelven qué pasa con
-los cupos regulares que se liberan, que siguen yendo a quien recargue primero el
-SIA. La lista de espera es complementaria: no crea cupos, sino que reasigna de
-forma automática y por prioridad los cupos existentes que se liberan. Además,
-puede apoyar el trámite de sobrecupos: ofrece un criterio objetivo y uniforme
-entre facultades para decidir a quién otorgarlos (el primero en espera) y datos
-sobre cuántos estudiantes esperan cupo en cada grupo.
+SISO-UNAL no reemplaza las citas: las complementa con tres componentes.
+\begin{enumerate}
+    \item \textbf{Lista de espera por prioridad:} cada grupo lleno tiene una espera ordenada por la prioridad institucional, y cada cupo liberado se asigna automáticamente al primero (Entrega 1).
+    \item \textbf{Grupos alternativos:} si un grupo está lleno, el sistema sugiere otro grupo de la misma asignatura con cupo y sin cruce (Entrega 2).
+    \item \textbf{Reportes de demanda:} los grupos y asignaturas con más estudiantes en espera, para planear cupos (Entregas 2 y 3).
+\end{enumerate}
 
 % =========================================================
 % 2. OBJETIVOS
@@ -302,122 +153,43 @@ sobre cuántos estudiantes esperan cupo en cada grupo.
 \section{Objetivos}
 
 \subsection{Objetivo general}
-
-Diseñar, implementar y evaluar en Java un sistema que simule la inscripción de
-asignaturas por citas de la UNAL y que la complemente con una lista de espera por
-prioridad, la sugerencia de grupos sin cruce de horario y reportes de demanda,
-utilizando estructuras de datos implementadas por el equipo y analizando la
-complejidad de sus operaciones.
+Diseñar e implementar en Java un sistema que complemente las citas de inscripción de la UNAL con listas de espera por prioridad y reasignación automática de cupos, justificando las estructuras de datos usadas y evaluando su desempeño.
 
 \subsection{Objetivos específicos}
-
 \begin{enumerate}
-\item Clasificar a cada estudiante en uno de los cuatro grupos de prelación de la
-Circular~13 y definir un orden total de prioridad entre estudiantes.
-\item Mantener, para cada grupo lleno, una lista de espera por prioridad con los
-estudiantes que aceptaron la asignación automática, y reasignar cada cupo
-liberado al estudiante de mayor prioridad.
-\item Simular la atención de las citas en orden de prioridad y permitir que el
-estudiante deshaga la última acción de su carrito de selección.
-\item Sugerir, cuando el grupo deseado esté lleno, grupos de la misma asignatura
-con cupo y sin cruce de horario.
-\item Generar reportes de demanda insatisfecha por asignatura y de cupos perdidos
-en el periodo de cancelación ordinaria.
-\item Analizar teórica y experimentalmente el costo de las operaciones principales
-y comparar implementaciones alternativas (lista ordenada frente a montículo;
-búsqueda lineal frente a tabla hash).
-\item Comparar, mediante simulación, la asignación actual (``gana el más
-rápido'') con la asignación por lista de espera con prioridad, midiendo cuántas
-veces un estudiante de menor prioridad obtiene un cupo antes que uno de mayor
-prioridad.
+    \item Ordenar a los estudiantes según los grupos de prelación con un único método de comparación, usando el IPA como dato de entrada.
+    \item Implementar una lista de espera por grupo que entregue siempre al estudiante de mayor prioridad: con una lista enlazada ordenada en la Entrega 1 y con un montículo en la Entrega 2.
+    \item Reasignar automáticamente cada cupo liberado al primero de la espera que haya aceptado la asignación y no tenga cruce de horario.
+    \item Sugerir grupos alternativos con cupo y sin cruce de horario.
+    \item Generar un reporte de los grupos con mayor demanda insatisfecha.
+    \item Medir, con 28.700 estudiantes simulados, el tiempo de las operaciones con cada implementación y comparar la asignación por prioridad con la asignación ``gana quien recarga primero''.
 \end{enumerate}
 
-Los objetivos 1 a 3 se abordan en la primera entrega; los objetivos 4 a 7, en
-las entregas 2 y 3.
-
 % =========================================================
-% 3. ALCANCE Y LIMITACIONES
+% 3. ALCANCE
 % =========================================================
 
 \section{Alcance y limitaciones}
 
-\subsection{Funcionalidades dentro del alcance (semestre)}
-
-\begin{itemize}
-\item Registro de grupos de asignaturas (cupo y horario) y de estudiantes de
-pregrado.
-\item Clasificación en grupos de prelación y orden total de prioridad.
-\item Simulación de las citas: franjas de atención y procesamiento FIFO de
-solicitudes.
-\item Carrito de selección con operación de deshacer.
-\item Lista de espera por prioridad y reasignación automática de cupos liberados.
-\item Fases del calendario 2 a 4: primera cita, adiciones y cancelaciones
-(semanas 1 y 2) y cancelación ordinaria (semanas 3 a 8).
-\item Detección de cruces de horario y sugerencia de grupos alternativos.
-\item Validación de prerrequisitos.
-\item Reportes de demanda insatisfecha y de cupos perdidos.
-\item Generación de datos sintéticos a escala real (28\,700 estudiantes) y
-evaluación experimental.
-\end{itemize}
+\subsection{Funcionalidades que se desarrollarán}
+Registro de grupos y estudiantes, clasificación por prioridad, procesamiento de la cita, carrito con deshacer, inscripción con control de cupo y de cruce de horario, lista de espera por prioridad, cancelación con reasignación automática, búsqueda por código, sugerencia de grupos alternativos, reporte de demanda y simulación con datos sintéticos.
 
 \subsection{Fuera del alcance}
-
-\begin{itemize}
-\item Integración con el SIA real o con bases de datos institucionales.
-\item El trámite de sobrecupos; el sistema solo reasigna cupos existentes.
-\item La fase 1 (consulta de la citación) como trámite; el sistema solo usa su
-resultado, el orden de prioridad.
-\item El periodo extemporáneo (fase 5), que depende de decisiones de comités.
-\item La bolsa de créditos y la validación de la carga mínima de 10 créditos al
-final de la fase 3.
-\item Estudiantes de posgrado (alrededor de 3\,390).
-\item Interfaz gráfica o web; el sistema se ejecuta por consola.
-\item Concurrencia real y carga sobre servidores; la competencia dentro de una
-franja se simula.
-\item El detalle de los ajustes razonables del Grupo~1 y de cada programa
-especial del Grupo~2 (se representan con indicadores booleanos), y los criterios
-propios de cada facultad para estudiantes de primera matrícula.
-\end{itemize}
+Interfaz gráfica, base de datos, conexión con el SIA real, posgrado, la asignación de las citas (el sistema usa su resultado), los sobrecupos, la cancelación extemporánea y el control de la bolsa de créditos.
 
 \subsection{Restricciones técnicas}
-
-\begin{itemize}
-\item Java 17 o superior, sin dependencias externas.
-\item Las estructuras de datos del proyecto se implementan desde cero; no se
-utilizan las colecciones de \texttt{java.util} (por ejemplo,
-\texttt{ArrayList}, \texttt{LinkedList} o \texttt{PriorityQueue}).
-\item El código y el documento se mantienen en el repositorio oficial del curso.
-\end{itemize}
+Java 17, ejecución por consola y estructuras de datos propias, sin usar las colecciones de \texttt{java.util}.
 
 \subsection{Supuestos}
-
 \begin{itemize}
-\item El IPA es un dato de entrada ya calculado por la universidad; el sistema no
-lo recalcula. La circular no publica los pesos de sus factores.
-\item El grupo de prelación se deriva de atributos del estudiante: discapacidad
-acreditada (Grupo~1); PAPA $\le 3.1$ o indicador de vulnerabilidad académica
-(Grupo~2); avance $\ge 80$\,\% (Grupo~3); en otro caso, Grupo~4.
-\item Dentro de cada grupo se ordena así: Grupo~1 por PAPA descendente; Grupo~2
-por PAPA ascendente (mayor riesgo primero); Grupo~3 por avance descendente y
-luego PAPA descendente; Grupo~4 por IPA descendente. El último desempate es el
-código del estudiante, para obtener un orden total y reproducible.
-\item El estudiante da su aceptación de la asignación automática al solicitar un
-grupo lleno, y puede retirarla saliendo de la lista. Cuando se libera un cupo, la
-asignación es inmediata. Una oferta con plazo para aceptar o rechazar el cupo se
-modelará en la segunda entrega, junto con las fases del calendario.
-\item El orden de atención de una cita coincide con el orden de prioridad; desde
-la segunda entrega se simula una llegada aleatoria dentro de cada franja para
-modelar la competencia real.
-\item Cada estudiante inscribe entre cuatro y cinco asignaturas.
+    \item Solo se modela pregrado de la sede Bogotá, con datos simulados.
+    \item Los datos de prioridad (discapacidad, vulnerabilidad, PAPA, avance e IPA) son datos de entrada. \textbf{El sistema no calcula el IPA}.
+    \item La reasignación automática solo ocurre en las adiciones (fase 3); en la cancelación ordinaria (fase 4) nadie puede inscribir.
+    \item Al pedir un grupo lleno, el estudiante indica si acepta que se le inscriba automáticamente cuando se libere un cupo. Solo quien acepta entra a la espera, y puede salir de ella cuando quiera.
 \end{itemize}
 
-\subsection{Límites razonables}
-
-Con un equipo de tres personas y tres entregas, el proyecto se limita a la
-simulación en memoria de un periodo de inscripción de la sede Bogotá. La
-fidelidad normativa se prioriza en la regla de prioridad, que es la que afecta
-directamente a las estructuras de datos; los demás detalles administrativos se
-simplifican y se documentan como supuestos.
+\subsection{Límites para el tiempo disponible}
+El proyecto avanza en tres entregas. La Entrega 1 implementa el flujo básico con estructuras lineales. Las entregas 2 y 3 reemplazan estructuras por versiones más eficientes y agregan horarios, sugerencias, reportes y experimentos.
 
 % =========================================================
 % 4. REQUERIMIENTOS
@@ -425,55 +197,34 @@ simplifican y se documentan como supuestos.
 
 \section{Requerimientos principales}
 
-\subsection{Requerimientos funcionales}
+La Tabla~\ref{tab:rf} lista los requerimientos funcionales y la entrega en que se implementa cada uno.
 
-\begin{table}[t]
-\centering
-\caption{Requerimientos funcionales y entrega en la que se implementan}
+\begin{table}[htbp]
+\caption{Requerimientos funcionales}
 \label{tab:rf}
-\begin{tabular}{@{}p{0.9cm}p{5.6cm}c@{}}
+\centering
+\footnotesize
+\begin{tabular}{@{}l p{5.4cm} c@{}}
 \toprule
-ID & Descripción & Entrega \\
+\textbf{ID} & \textbf{Requerimiento} & \textbf{Entrega} \\
 \midrule
-RF-01 & Registrar grupos de asignaturas con cupo. & 1 \\
-RF-02 & Registrar estudiantes y calcular su grupo de prelación. & 1 \\
-RF-03 & Ordenar a los estudiantes por prioridad oficial. & 1 \\
-RF-04 & Atender en orden FIFO a los estudiantes de una cita. & 1 \\
-RF-05 & Inscribir a un estudiante si hay cupo. & 1 \\
-RF-06 & Si el grupo está lleno y el estudiante acepta la asignación automática, insertarlo en la lista de espera por prioridad; permitirle retirarse de ella. & 1 \\
-RF-07 & Cancelar una inscripción y reasignar el cupo al primero de la lista de espera. & 1 \\
-RF-08 & Agregar grupos al carrito y deshacer la última acción. & 1 \\
-RF-09 & Mostrar inscritos y lista de espera de un grupo. & 1 \\
-RF-10 & Repartir a los estudiantes en franjas de citas. & 2 \\
-RF-11 & Al reasignar, retirar al estudiante de las demás listas de la misma asignatura. & 2 \\
-RF-12 & Buscar estudiantes y grupos por código en tiempo esperado $O(1)$. & 2 \\
-RF-13 & Simular las fases del calendario académico. & 2 \\
-RF-14 & Detectar cruces de horario. & 2 \\
-RF-15 & Generar datos sintéticos a escala real. & 2 \\
-RF-16 & Validar prerrequisitos de una asignatura. & 3 \\
-RF-17 & Sugerir grupos alternativos sin cruce de horario. & 3 \\
-RF-18 & Reportar demanda insatisfecha y cupos perdidos. & 3 \\
+RF1 & Registrar grupos con su asignatura, número y cupo. & 1 \\
+RF2 & Registrar estudiantes con sus datos de prioridad y ubicarlos en su grupo de prelación. & 1 \\
+RF3 & Atender las solicitudes de una cita en orden (FIFO). & 1 \\
+RF4 & Agregar grupos al carrito y deshacer el último. & 1 \\
+RF5 & Inscribir si hay cupo y rechazar solicitudes repetidas. & 1 \\
+RF6 & Si el grupo está lleno y el estudiante acepta, ubicarlo en la espera por prioridad; permitirle salir de ella. & 1 \\
+RF7 & Al cancelar, asignar el cupo al primero de la espera. & 1 \\
+RF8 & Mostrar inscritos, cupos libres y espera de un grupo. & 1 \\
+RF9 & Validar cruces de horario al inscribir y al reasignar. & 2 \\
+RF10 & Retirar al estudiante de las demás esperas de la misma asignatura cuando obtiene cupo. & 2 \\
+RF11 & Buscar estudiantes y asignaturas por código en tiempo sublineal. & 2 \\
+RF12 & Sugerir otro grupo con cupo y sin cruce. & 2 \\
+RF13 & Reportar los grupos con más estudiantes en espera. & 2 \\
+RF14 & Simular el periodo de adiciones con 28.700 estudiantes y comparar estrategias. & 3 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
-La Tabla~\ref{tab:rf} lista los requerimientos funcionales. Cada uno corresponde
-a una operación concreta que puede ejecutarse y verificarse en el programa.
-
-\subsection{Requerimientos no funcionales}
-
-\begin{itemize}
-\item \textbf{RNF-01 (Eficiencia).} Las operaciones de cola y pila deben ser
-$O(1)$; la extracción del estudiante de mayor prioridad debe ser $O(1)$ con la
-lista ordenada y $O(\log n)$ con el montículo.
-\item \textbf{RNF-02 (Escalabilidad).} La simulación completa debe poder
-ejecutarse con 28\,700 estudiantes desde la segunda entrega.
-\item \textbf{RNF-03 (Reproducibilidad).} Los experimentos usarán semillas fijas
-para que cualquier persona obtenga los mismos resultados.
-\item \textbf{RNF-04 (Mantenibilidad).} Las estructuras se exponen mediante
-interfaces, de modo que una implementación pueda reemplazarse sin modificar el
-resto del sistema.
-\end{itemize}
 
 % =========================================================
 % 5. TRABAJO RELACIONADO
@@ -481,421 +232,143 @@ resto del sistema.
 
 \section{Trabajo relacionado inicial}
 
-\textbf{Sistemas institucionales.} El SIA de la UNAL gestiona la inscripción
-mediante citas cuyo orden fija la Circular~13 de 2026~\cite{circular13}. Este
-esquema garantiza el acceso por prelación, pero, una vez abierta la franja, la
-asignación de cupos opera como ``primero en llegar, primero en ser atendido'' y
-no existe una reserva de cupos ni una lista de espera para los cupos que se
-liberan.
+\textbf{Asignación por turnos.} Atender a los estudiantes uno a uno en orden de prioridad corresponde al mecanismo de \emph{dictadura serial}, estudiado por Abdulkadiroğlu y Sönmez~\cite{abdulkadiroglu1998}. Es el principio de las citas del SIA~\cite{circular13}, pero solo se aplica en el momento de la cita.
 
-\textbf{Mecanismos de asignación de cursos.} La literatura de diseño de
-mecanismos estudia la asignación de cupos como un problema de asignación
-multiunidad. El mecanismo de \emph{dictadura serial}, en el que los agentes
-eligen uno tras otro según un orden de prioridad, ha sido analizado
-formalmente~\cite{abdulkadiroglu1998}; el sistema de citas de la UNAL puede verse
-como una variante de este esquema ordenada por la Circular~13. Budish y
-Cantillon~\cite{budish2012} estudiaron el mecanismo de asignación de cursos de
-la Escuela de Negocios de Harvard y mostraron cómo los estudiantes responden
-estratégicamente a sus reglas. Budish~\cite{budish2011} propuso un mecanismo
-basado en equilibrio competitivo aproximado, implementado posteriormente a gran
-escala en la Escuela Wharton bajo el nombre \emph{Course Match}~\cite{budish2017}.
-A diferencia de esos trabajos, este proyecto no rediseña el mecanismo principal:
-conserva las citas y se concentra en la reasignación de los cupos que se liberan,
-donde hoy no se aplica ninguna prioridad.
+\textbf{Asignación de cursos.} Budish y Cantillon~\cite{budish2012} muestran que en la asignación de cursos por turnos de Harvard los estudiantes manipulan sus preferencias. Budish~\cite{budish2011} propone un mecanismo de mercado que Wharton aplica como \emph{Course Match}~\cite{budish2017}. SISO-UNAL tiene un alcance más acotado: conserva la prioridad existente y la extiende a los cupos liberados.
 
-\textbf{Estructuras de datos.} La cola de prioridad es el tipo abstracto natural
-para obtener repetidamente el elemento de mayor prioridad. Sus implementaciones
-clásicas (lista no ordenada, lista ordenada y montículo binario) y sus costos se
-presentan en~\cite{goodrich2014,sedgewick2011,cormen2022}; el montículo permite
-inserción y extracción en $O(\log n)$ y, aplicado a ordenamiento, el algoritmo
-\emph{heapsort} en $O(n\log n)$~\cite{cormen2022}. Las colas FIFO son el modelo
-habitual para atender solicitudes en orden de llegada, y las pilas, para
-implementar mecanismos de deshacer en editores y aplicaciones~\cite{goodrich2014}.
+\textbf{Listas de espera académicas.} Muchos sistemas de gestión académica tienen listas de espera que inscriben al siguiente estudiante cuando se libera un cupo, normalmente por orden de llegada. SISO-UNAL usa en su lugar la prioridad institucional.
+
+\textbf{Estructuras de datos.} Un montículo binario inserta y extrae el máximo en $O(\log n)$; un árbol AVL busca en $O(\log n)$ y una tabla hash en $O(1)$ esperado~\cite{cormen,goodrich}. Estas estructuras guían la evolución del sistema.
 
 % =========================================================
-% 6. DISEÑO DE LA SOLUCIÓN
+% 6. DISEÑO
 % =========================================================
 
 \section{Diseño de la solución}
 
 \subsection{Arquitectura}
+El sistema tiene dos capas (Fig.~\ref{fig:clases}). El \textbf{modelo} está formado por \texttt{Student}, que guarda los datos de prioridad y define el orden con \texttt{compareTo}, y \texttt{CourseGroup}, que guarda el cupo, los inscritos y la lista de espera, con las operaciones \texttt{request}, \texttt{leaveWaitlist} y \texttt{cancel}. Las \textbf{estructuras de datos} son genéricas y propias. La lista de espera se declara con la interfaz \texttt{PriorityQueueADT}, así que en la Entrega 2 se cambia por un montículo modificando una sola línea. \texttt{Main} ejecuta un escenario de demostración.
 
-El sistema se organiza en tres capas (Fig.~\ref{fig:arquitectura}):
-
-\begin{itemize}
-\item \textbf{Estructuras de datos:} \texttt{Node}, \texttt{LinkedList},
-\texttt{LinkedQueue}, \texttt{LinkedStack}, la interfaz
-\texttt{PriorityQueueADT} y su implementación
-\texttt{SortedLinkedPriorityQueue}. Son genéricas y no conocen el dominio.
-\item \textbf{Modelo:} \texttt{Student} (atributos, grupo de prelación y orden
-de prioridad mediante \texttt{Comparable}) y \texttt{CourseGroup} (cupo,
-inscritos, lista de espera, solicitud y cancelación).
-\item \textbf{Presentación:} \texttt{Main} ejecuta una demostración guiada por
-consola. En la segunda entrega se agregará una clase de servicio que coordine el
-catálogo, las franjas de citas y las fases del calendario.
-\end{itemize}
-
-\begin{figure}[t]
+\begin{figure}[htbp]
 \centering
+\footnotesize
 \begin{tikzpicture}[
-    box/.style={draw, rounded corners, align=center, font=\footnotesize,
-                minimum width=2.3cm, minimum height=0.8cm},
-    arr/.style={-{Stealth}, thick},
-    node distance=0.55cm and 0.4cm
-]
-\node[box] (main) {\texttt{Main}\\(demo por consola)};
-\node[box, below left=of main] (student) {\texttt{Student}};
-\node[box, below right=of main] (group) {\texttt{CourseGroup}};
-\node[box, below=1.6cm of main, minimum width=6.6cm] (ds)
-    {\texttt{LinkedList} \; \texttt{LinkedQueue} \; \texttt{LinkedStack}\\
-     \texttt{PriorityQueueADT} $\leftarrow$ \texttt{SortedLinkedPriorityQueue}};
-\draw[arr] (main) -- (student);
+  box/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, font=\footnotesize\ttfamily},
+  arr/.style={-{Stealth[length=4pt]}},
+  impl/.style={dashed, -{Triangle[open, length=5pt]}}]
+\node[box] (main) {Main};
+\node[box, below=0.5cm of main] (group) {CourseGroup\\[1pt]\rmfamily\scriptsize request, leaveWaitlist, cancel};
+\node[box, left=0.35cm of group] (student) {Student\\[1pt]\rmfamily\scriptsize compareTo};
+\node[box, below left=0.6cm and -0.6cm of group] (list) {LinkedList};
+\node[box, below right=0.6cm and -0.9cm of group] (adt) {PriorityQueueADT};
+\node[box, below=0.45cm of adt] (sorted) {SortedLinked-\\PriorityQueue};
+\node[box, right=0.3cm of main] (queue) {LinkedQueue};
+\node[box, left=0.3cm of main] (stack) {LinkedStack};
 \draw[arr] (main) -- (group);
-\draw[arr] (group) -- (student);
-\draw[arr] (group) -- (ds);
-\draw[arr] (main) -- (ds);
+\draw[arr] (main) -- (queue);
+\draw[arr] (main) -- (stack);
+\draw[arr] (group) -- node[above, font=\scriptsize] {} (student);
+\draw[arr] (group) -- node[left, font=\scriptsize\rmfamily] {inscritos} (list);
+\draw[arr] (group) -- node[right, font=\scriptsize\rmfamily] {espera} (adt);
+\draw[impl] (sorted) -- (adt);
 \end{tikzpicture}
-\caption{Arquitectura en capas de SISO-UNAL (Entrega 1). Las flechas indican
-dependencia.}
-\label{fig:arquitectura}
+\caption{Clases de la Entrega 1. Las flechas sólidas indican uso; la punteada, implementación de la interfaz.}
+\label{fig:clases}
 \end{figure}
 
-\subsection{Modelo de datos}
-
-\begin{itemize}
-\item \texttt{Student}: código, nombre, discapacidad (booleano), PAPA,
-vulnerabilidad académica (booleano), avance curricular (\%) e IPA. Implementa
-\texttt{Comparable<Student>}: \texttt{a.compareTo(b) < 0} significa que
-\texttt{a} tiene \emph{mayor} prioridad que \texttt{b}. La comparación cuesta
-$O(1)$. La igualdad se define por el código.
-\item \texttt{CourseGroup}: código y nombre de la asignatura, número de grupo,
-cupo, lista de inscritos (\texttt{LinkedList<Student>}) y lista de espera
-(\texttt{PriorityQueueADT<Student>}, instanciada como
-\texttt{SortedLinkedPriorityQueue}). Ofrece \texttt{request} (inscribir o poner
-en espera si el estudiante acepta la asignación automática; el resultado es un
-\texttt{RequestResult}), \texttt{leaveWaitlist} (retirarse de la lista) y
-\texttt{cancel} (cancelar y reasignar).
-\end{itemize}
+\subsection{Criterio de prioridad}
+Toda la regla de prioridad está en \texttt{Student.compareTo}, de costo $O(1)$. Primero compara el grupo de prelación (el menor va primero). Dentro del grupo, el 1 se ordena por PAPA de mayor a menor, el 2 por PAPA de menor a mayor (más riesgo primero), el 3 por avance y el 4 por IPA, ambos de mayor a menor. El último desempate es el código del estudiante, lo que da un orden total y reproducible.
 
 \subsection{Flujo de información}
-
 \begin{enumerate}
-\item Se crean los grupos y los estudiantes; cada estudiante calcula su grupo de
-prelación a partir de sus atributos.
-\item Los estudiantes se ordenan insertándolos en una cola de prioridad y
-extrayéndolos uno a uno; en ese orden se encolan en la cola FIFO de la cita.
-\item Se desencolan los estudiantes y cada uno solicita un grupo: queda inscrito
-si hay cupo; si no, entra a la lista de espera solo si acepta la asignación
-automática.
-\item Durante las adiciones, nuevas solicitudes sobre un grupo lleno entran a la
-lista de espera en la posición que les corresponde por prioridad, sin importar
-el momento de llegada.
-\item Cada cancelación libera un cupo que se asigna al primero de la lista de
-espera.
-\item El carrito de selección (pila) permite deshacer la última acción.
+    \item La cola de prioridad ordena a los estudiantes para las citas, y en ese orden entran a la cola FIFO de la cita.
+    \item Cada solicitud se atiende con \texttt{request} (Algoritmo~\ref{alg:request}).
+    \item Al cancelar, \texttt{cancel} libera el cupo y lo asigna al primero de la espera (Algoritmo~\ref{alg:cancel}).
+    \item El carrito guarda grupos en una pila, y deshacer retira el último agregado.
 \end{enumerate}
 
-\subsection{Algoritmos principales}
-
-El Algoritmo~\ref{alg:orden} ordena a los estudiantes y arma la cola de la cita;
-el Algoritmo~\ref{alg:solicitud} procesa una solicitud y el
-Algoritmo~\ref{alg:cancelar} reasigna un cupo liberado.
-
-\begin{algorithm}[t]
-\caption{Orden de atención de una cita}
-\label{alg:orden}
+\begin{algorithm}[htbp]
+\caption{Solicitar un grupo (\texttt{request})}
+\label{alg:request}
 \begin{algorithmic}[1]
-\Require lista de estudiantes $E$ ($|E|=n$)
-\Ensure cola FIFO $C$ con los estudiantes en orden de prioridad
-\State $P \gets$ nueva cola de prioridad vacía
-\For{cada $e \in E$}
-    \State $P.\textsc{insert}(e)$ \Comment{$O(n)$ con lista ordenada}
-\EndFor
-\State $C \gets$ nueva cola FIFO vacía
-\While{\textbf{no} $P.\textsc{isEmpty}()$}
-    \State $C.\textsc{enqueue}(P.\textsc{removeHighest}())$ \Comment{$O(1)$}
-\EndWhile
-\State \Return $C$
+\Require estudiante $e$, grupo $g$, aceptación $a$
+\If{$e$ ya está inscrito o en espera en $g$} \State rechazar \EndIf
+\If{$g$ tiene cupo}
+    \State agregar $e$ a $g.\mathit{inscritos}$ \Comment{$O(1)$}
+    \State \Return \textsc{Enrolled}
+\ElsIf{$a$}
+    \State insertar $e$ en $g.\mathit{espera}$ \Comment{$O(w)$}
+    \State \Return \textsc{Waitlisted}
+\Else
+    \State \Return \textsc{Rejected}
+\EndIf
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}[t]
-\caption{Solicitud de inscripción (\texttt{request})}
-\label{alg:solicitud}
-\begin{algorithmic}[1]
-\Require estudiante $e$, grupo $g$ con cupo $c$, aceptación $a$
-\If{$e \in g.\textit{inscritos}$ \textbf{o} $e \in g.\textit{espera}$}
-    \State error: solicitud duplicada \Comment{$O(c + w)$}
-\EndIf
-\If{$|g.\textit{inscritos}| < c$}
-    \State $g.\textit{inscritos}.\textsc{addLast}(e)$ \Comment{$O(1)$}
-    \State \Return \textsc{Inscrito}
-\EndIf
-\If{\textbf{no} $a$}
-    \State \Return \textsc{Rechazado} \Comment{no aceptó la asignación}
-\EndIf
-\State $g.\textit{espera}.\textsc{insert}(e)$ \Comment{$O(w)$}
-\State \Return \textsc{EnEspera}
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[t]
-\caption{Cancelación y reasignación automática (\texttt{cancel})}
-\label{alg:cancelar}
+\begin{algorithm}[htbp]
+\caption{Cancelar y reasignar (\texttt{cancel})}
+\label{alg:cancel}
 \begin{algorithmic}[1]
 \Require estudiante $e$ inscrito en el grupo $g$
-\State $g.\textit{inscritos}.\textsc{remove}(e)$ \Comment{$O(c)$}
-\If{$g.\textit{espera}.\textsc{isEmpty}()$}
-    \State \Return \textbf{nulo}
+\State eliminar $e$ de $g.\mathit{inscritos}$ \Comment{$O(c)$}
+\If{$g.\mathit{espera}$ no está vacía}
+    \State $p \gets g.\mathit{espera}.\mathrm{removeHighest}()$ \Comment{$O(1)$}
+    \State agregar $p$ a $g.\mathit{inscritos}$ \Comment{$O(1)$}
 \EndIf
-\State $s \gets g.\textit{espera}.\textsc{removeHighest}()$ \Comment{$O(1)$}
-\State $g.\textit{inscritos}.\textsc{addLast}(s)$ \Comment{$O(1)$}
-\State \Return $s$
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Ejemplo de funcionamiento}
-
-El prototipo ejecuta el siguiente escenario sobre el grupo 1 de Cálculo
-Diferencial, con cupo 2, y los estudiantes de la Tabla~\ref{tab:ejemplo}.
-
-\begin{table}[t]
-\centering
-\caption{Estudiantes del ejemplo (datos ilustrativos)}
-\label{tab:ejemplo}
-\begin{tabular}{@{}llcl@{}}
-\toprule
-Estudiante & Atributo decisivo & Grupo & Orden \\
-\midrule
-Ana & discapacidad & 1 & 1.º \\
-Carla & avance 92\,\% & 3 & 2.º \\
-Daniel & avance 85\,\% & 3 & 3.º \\
-Elena & IPA 7.5 & 4 & 4.º \\
-Felipe & IPA 6.0 & 4 & 5.º \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{enumerate}
-\item \emph{Cita:} la cola de prioridad ordena a Ana, Carla, Elena y Felipe, que
-son atendidos en ese orden. Ana y Carla quedan inscritas. Elena acepta la
-asignación automática y entra a la lista de espera; Felipe no la acepta y no
-entra: $[\text{Elena}]$.
-\item \emph{Adiciones:} Daniel solicita el grupo más tarde y acepta la
-asignación automática. Aunque llegó después, entra a la lista por delante de
-Elena por su prioridad: $[\text{Daniel}, \text{Elena}]$.
-\item \emph{Cancelación:} Carla cancela. El cupo se asigna automáticamente a
-Daniel. En el sistema actual, el cupo lo habría obtenido quien recargara primero
-el SIA.
-\item \emph{Carrito:} Felipe agrega dos grupos a su carrito y deshace el último.
-\end{enumerate}
+El grupo 1 de Cálculo Diferencial tiene cupo 2. En la cita, la cola de prioridad ordena a Ana (grupo 1), Carla (grupo 3), Elena (grupo 4, IPA 7,5) y Felipe (grupo 4, IPA 6,0). Ana y Carla quedan inscritas. Elena acepta la asignación automática y entra a la espera; Felipe no la acepta y su solicitud se rechaza. En las adiciones llega Daniel (grupo 3), que acepta y queda \emph{antes} que Elena por su prioridad, aunque llegó después. Cuando Carla cancela, el cupo pasa automáticamente a Daniel.
 
 % =========================================================
-% 7. ESTRUCTURAS DE DATOS SELECCIONADAS
+% 7. ESTRUCTURAS DE DATOS
 % =========================================================
 
 \section{Estructuras de datos seleccionadas}
 
-Cada estructura se incorpora porque responde a una necesidad concreta del
-problema. La Tabla~\ref{tab:estructuras} resume la selección; a continuación se
-justifica cada una. Se usa $n$ para el número de estudiantes, $c$ para el cupo de
-un grupo y $w$ para el tamaño de una lista de espera.
+La Tabla~\ref{tab:ed} resume las estructuras de la Entrega 1; $w$ es el tamaño de la lista de espera y $c$ el cupo del grupo. Cada una responde a una necesidad concreta del flujo.
 
-\begin{table*}[t]
+\begin{table*}[htbp]
+\caption{Estructuras de datos de la Entrega 1}
+\label{tab:ed}
 \centering
-\caption{Estructuras de datos de la primera entrega}
-\label{tab:estructuras}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}p{2.6cm}p{2.9cm}p{2.5cm}p{3.3cm}p{2.6cm}p{2.6cm}@{}}
+\begin{tabular}{@{}p{2.6cm} p{2.6cm} p{2.3cm} p{4.3cm} p{2.8cm} p{2.4cm}@{}}
 \toprule
-Estructura & Información que representa & Operaciones & Justificación & Alternativas & Costos \\
+\textbf{Estructura} & \textbf{Información} & \textbf{Operaciones} & \textbf{Por qué es apropiada} & \textbf{Alternativas} & \textbf{Costo} \\
 \midrule
-Cola de prioridad sobre lista ordenada (\texttt{SortedLinked}\allowbreak\texttt{PriorityQueue}) &
-Lista de espera de un grupo; orden de atención de la cita &
-\texttt{insert}, \texttt{removeHighest}, \texttt{peekHighest}, \texttt{remove},
-\texttt{contains} &
-El primero de la lista siempre es el de mayor prioridad; la extracción es
-inmediata &
-Lista no ordenada (inserción $O(1)$, extracción $O(n)$); montículo (entrega 2) &
-\texttt{insert} $O(w)$; \texttt{removeHighest} $O(1)$; \texttt{remove},
-\texttt{contains} $O(w)$ \\
-\addlinespace
-Lista enlazada simple con cola (\texttt{LinkedList}) &
-Inscritos de un grupo &
-\texttt{addLast}, \texttt{remove}, \texttt{contains} &
-Tamaño variable; inserción al final constante gracias a la referencia al último
-nodo &
-Arreglo dinámico (búsqueda igual, inserción amortizada) &
-\texttt{addLast} $O(1)$; \texttt{remove}, \texttt{contains} $O(c)$ \\
-\addlinespace
-Cola FIFO enlazada (\texttt{LinkedQueue}) &
-Estudiantes de una cita en orden de atención &
-\texttt{enqueue}, \texttt{dequeue}, \texttt{peek} &
-Modela la atención en orden de llegada dentro de la cita &
-Cola circular sobre arreglo (requiere capacidad o redimensionar) &
-Todas $O(1)$ \\
-\addlinespace
-Pila enlazada (\texttt{LinkedStack}) &
-Carrito de selección del estudiante &
-\texttt{push}, \texttt{pop}, \texttt{peek} &
-Deshacer la última acción es un comportamiento LIFO &
-Arreglo con índice (capacidad fija) &
-Todas $O(1)$ \\
+Cola de prioridad sobre lista enlazada ordenada (\texttt{SortedLinked}\allowbreak\texttt{PriorityQueue}) & Lista de espera de cada grupo; orden de las citas & insert, removeHighest, peekHighest, remove & El primero de la lista siempre es el de mayor prioridad, así que asignar un cupo es inmediato. Usa lo visto en el curso y en la Entrega 2 se reemplaza por un montículo. & Lista sin ordenar (insertar $O(1)$, extraer $O(w)$); montículo binario & insert $O(w)$; removeHighest $O(1)$; remove $O(w)$ \\
+Lista enlazada con referencia al último nodo (\texttt{LinkedList}) & Inscritos de un grupo & addLast, remove, contains & Crece sin límite fijo y agrega al final en tiempo constante. & Arreglo dinámico & addLast $O(1)$; remove y contains $O(c)$ \\
+Cola FIFO enlazada (\texttt{LinkedQueue}) & Estudiantes de una cita & enqueue, dequeue, peek & Atiende las solicitudes en el orden en que llegan. & Cola circular sobre arreglo & $O(1)$ \\
+Pila enlazada (\texttt{LinkedStack}) & Grupos del carrito & push, pop, peek & Deshacer retira siempre el último grupo agregado (LIFO). & Pila sobre arreglo & $O(1)$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\subsection{Cola de prioridad (lista de espera)}
-
-Es la estructura central del proyecto. Debe permitir insertar a un estudiante en
-cualquier momento y extraer siempre al de mayor prioridad. En esta entrega se
-implementa con una lista enlazada ordenada: la inserción recorre la lista hasta
-encontrar su posición ($O(w)$) y la extracción toma el primer nodo ($O(1)$). Ante
-prioridades iguales, el nuevo elemento queda después de los existentes, aunque
-en la práctica no hay empates porque el orden de \texttt{Student} es total. Se
-eligió esta versión porque usa únicamente estructuras ya estudiadas en el curso y
-porque, en una lista de espera, las extracciones (cada cupo liberado) deben ser
-inmediatas. La interfaz \texttt{PriorityQueueADT} permitirá sustituirla por un
-montículo binario, con inserción y extracción en $O(\log w)$, sin modificar
-\texttt{CourseGroup}. Ambas implementaciones se compararán experimentalmente.
-
-La misma cola de prioridad se usa para ordenar a los estudiantes antes de la
-cita (Algoritmo~\ref{alg:orden}). Con la lista ordenada, este ordenamiento cuesta
-$O(n^2)$ en el peor caso; con el montículo será $O(n\log n)$, equivalente a
-\emph{heapsort}.
-
-\subsection{Lista enlazada (inscritos)}
-
-Representa los inscritos de un grupo, cuyo número cambia con cada inscripción y
-cancelación. Mantener una referencia al último nodo permite \texttt{addLast} en
-$O(1)$. Verificar si un estudiante ya está inscrito y eliminarlo al cancelar
-cuestan $O(c)$; como $c$ es el cupo de un grupo (decenas de estudiantes), este
-costo es aceptable.
-
-\subsection{Cola FIFO (atención de la cita)}
-
-Dentro de una cita, el SIA atiende a los estudiantes según el orden en que
-completan sus operaciones. La cola FIFO representa exactamente ese
-comportamiento, con \texttt{enqueue} y \texttt{dequeue} en $O(1)$. Se eligió la
-versión enlazada porque el número de estudiantes por cita varía y no exige fijar
-una capacidad.
-
-\subsection{Pila (carrito y deshacer)}
-
-Antes de confirmar, el estudiante agrega grupos a su carrito y puede deshacer la
-última acción. Este comportamiento es LIFO: la acción que se deshace siempre es
-la más reciente, por lo que \texttt{push} y \texttt{pop} en $O(1)$ son suficientes.
-
-\subsection{Resumen de complejidad de las operaciones del sistema}
-
-\begin{itemize}
-\item Ordenar a los estudiantes para la cita: $O(n^2)$ (lista ordenada)
-$\rightarrow$ $O(n\log n)$ (montículo).
-\item Solicitud de inscripción (\texttt{request}): $O(c + w)$, dominado por la
-verificación de duplicados; la inscripción en sí es $O(1)$ y la entrada a la
-lista de espera, $O(w)$.
-\item Cancelación con reasignación (\texttt{cancel}): $O(c) + O(1)$.
-\item Deshacer en el carrito: $O(1)$.
-\end{itemize}
+En conjunto, \texttt{request} cuesta $O(c + w)$, porque primero verifica que la solicitud no esté repetida; \texttt{cancel} cuesta $O(c)$ y \texttt{leaveWaitlist}, $O(w)$. En la Entrega 2, el montículo bajará la inserción en la espera a $O(\log w)$ y un árbol AVL permitirá buscar por código en $O(\log n)$. En la Entrega 3 se usarán una tabla hash y un grafo de prerrequisitos.
 
 % =========================================================
-% 8. ESTADO DE LA IMPLEMENTACIÓN
+% 8. ESTADO
 % =========================================================
 
 \section{Estado de la implementación}
 
-\subsection{Funcionalidades implementadas}
+\textbf{Implementado (RF1 a RF8):} las estructuras \texttt{Node}, \texttt{LinkedList}, \texttt{LinkedQueue}, \texttt{LinkedStack}, \texttt{PriorityQueueADT} y \texttt{SortedLinkedPriorityQueue}; la clasificación y el orden de prioridad en \texttt{Student}; y en \texttt{CourseGroup}, la inscripción con cupo, la lista de espera con aceptación previa, la salida de la espera y la cancelación con reasignación automática. El código compila con Java 17 y se probó en casos borde.
 
-\begin{itemize}
-\item Estructuras genéricas propias: \texttt{Node}, \texttt{LinkedList},
-\texttt{LinkedQueue}, \texttt{LinkedStack}, \texttt{PriorityQueueADT} y
-\texttt{SortedLinkedPriorityQueue}. Las operaciones sobre estructuras vacías
-lanzan una excepción con un mensaje claro.
-\item \texttt{Student}: grupo de prelación y orden total de prioridad
-(\texttt{compareTo}), con el IPA como dato de entrada.
-\item \texttt{CourseGroup}: inscripción con cupo, lista de espera por prioridad,
-aceptación de la asignación automática y retiro de la lista, rechazo de
-solicitudes duplicadas y cancelación con reasignación automática del cupo
-(RF-01 a RF-07 y RF-09). El resultado de cada solicitud se representa con el
-enumerado \texttt{RequestResult} (inscrito, en espera o rechazado).
-\item Carrito con deshacer (RF-08).
-\item Demostración guiada por consola (\texttt{Main}) con el escenario del
-ejemplo de la sección de diseño.
-\end{itemize}
+\textbf{Parcialmente implementado:} la demostración es guiada y no tiene menú; se trabaja con un grupo a la vez, sin catálogo; y \texttt{cancel} siempre reasigna, porque todavía no distingue la fase 3 de la fase 4.
 
-\subsection{Funcionalidades parcialmente implementadas}
+\textbf{Pendiente:} cruces de horario, catálogo, retiro de las demás esperas, montículo, árbol AVL, sugerencia de grupos y reporte de demanda (Entrega 2); tabla hash, grafo de prerrequisitos y experimentos con 28.700 estudiantes (Entrega 3). Los resultados, la discusión y las conclusiones se desarrollarán en esas entregas.
 
-\begin{itemize}
-\item Simulación de citas: se atiende una cita en orden de prioridad; el reparto
-de los estudiantes en varias franjas (RF-10) se agregará en la segunda entrega.
-\item Orden dentro del Grupo~4: se usa solo el IPA; la subdivisión por número de
-matrícula se agregará en la segunda entrega.
-\item Interacción por consola: demostración guiada, sin menú interactivo.
-\end{itemize}
-
-\subsection{Funcionalidades pendientes}
-
-\begin{itemize}
-\item \textbf{Entrega 2:} oferta del cupo liberado con plazo para aceptar o
-rechazar; franjas de citas; retiro del estudiante de las demás
-listas de espera de la misma asignatura (RF-11); cola de prioridad con montículo;
-tabla hash para búsquedas por código; generador de datos sintéticos (28\,700
-estudiantes según la Tabla~\ref{tab:facultades}); llegada aleatoria dentro de cada
-franja; fases del calendario; detección de cruces de horario; menú interactivo;
-diseño experimental.
-\item \textbf{Entrega 3:} grafo de prerrequisitos (recorridos BFS/DFS);
-sugerencia de grupos alternativos sin cruce; reportes de demanda insatisfecha y
-cupos perdidos; experimentos comparativos e informe final.
-\end{itemize}
-
-\subsection{Repositorio}
-
-El código se encuentra en el repositorio oficial del curso, en
-\texttt{DS3/teams/team-07/projects/entrega-01/}. Se compila y ejecuta desde esa
-carpeta con:
-
-\begin{lstlisting}[language=bash,numbers=none]
-javac -encoding UTF-8 -d out src/*.java
-java -cp out Main
-\end{lstlisting}
-
-El archivo \texttt{README.md} de esa carpeta incluye la salida esperada completa
-del programa.
+\textbf{Repositorio:} \url{https://github.com/byepesg/DS-262}, carpeta \texttt{DS3/teams/team-07/projects/entrega-01/}. El \texttt{README.md} explica cómo compilar y ejecutar.
 
 % =========================================================
-% 9. RESULTADOS, DISCUSIÓN Y CONCLUSIONES (PRELIMINAR)
+% USO DE IA
 % =========================================================
 
-\section{Resultados y discusión}
-
-Esta sección se desarrollará en las entregas 2 y 3. Se medirán el tiempo de
-ordenamiento y de las operaciones de la lista de espera para
-$n \in \{1\,000;\ 10\,000;\ 28\,700\}$, comparando la lista ordenada con el
-montículo, y se cuantificará la equidad de la asignación (número de inversiones
-de prioridad) en el escenario actual frente al propuesto, con énfasis en la
-Facultad de Ingeniería y en las asignaturas compartidas.
-
-\section{Conclusiones preliminares}
-
-El problema seleccionado exige mantener un orden de prioridad sobre decenas de
-miles de estudiantes y extraer repetidamente el de mayor prioridad, lo que
-conecta directamente con los contenidos del curso. La primera entrega implementa
-el núcleo del sistema, la lista de espera por prioridad, con un diseño basado en
-interfaces que permite evolucionar hacia montículos, tablas hash y grafos sin
-rehacer el sistema.
-
-% =========================================================
-% DECLARACIÓN DE USO DE IA
-% =========================================================
-
-\section*{Declaración de uso de inteligencia artificial}
-
-Se utilizó un asistente de inteligencia artificial (Claude, de Anthropic) para la
-lluvia de ideas, la organización de este documento, la revisión del código y la
-implementación de la lista de espera por prioridad. El contenido y el código
-fueron verificados, modificados e integrados por los autores, quienes asumen la
-responsabilidad total del resultado.
+\section*{Declaración de uso de herramientas de IA}
+El equipo usó un asistente de inteligencia artificial (Claude, de Anthropic) para organizar la propuesta, revisar la redacción, revisar el código inicial e implementar la lista de espera por prioridad. Los integrantes verificaron el resultado y responden por él en la sustentación.
 
 % =========================================================
 % REFERENCIAS
@@ -904,53 +377,49 @@ responsabilidad total del resultado.
 \begin{thebibliography}{00}
 
 \bibitem{unal-cifras}
-Universidad Nacional de Colombia, Dirección de Planeación y Estadística, Sede
-Bogotá, ``Sede en cifras: Matriculados,'' reporte interactivo. [En línea].
-Disponible en:
-\url{https://planeacion.bogota.unal.edu.co/sede_en_cifras/reportes_interactivos/Matriculados/}
+Dirección de Planeación y Estadística, Sede Bogotá, Universidad Nacional de Colombia,
+``Sede en cifras: Matriculados,'' 2026.
+[En línea]. Disponible en: \url{https://planeacion.bogota.unal.edu.co/sede_en_cifras/reportes_interactivos/Matriculados/}
+
+% VERIFICAR: confirmar número, fecha y enlace oficial de la circular antes de entregar.
+\bibitem{circular13}
+Vicerrectoría Académica, Universidad Nacional de Colombia,
+``Circular 13 de 2026: asignación de citas de inscripción,'' Bogotá, 2026.
 
 \bibitem{dninfoa}
-Universidad Nacional de Colombia, Dirección Nacional de Información Académica
-(DNINFOA), ``Inscripción de asignaturas,'' infografía. [En línea]. Disponible
-en: \url{https://dninfoa.unal.edu.co/docs/Infografia_inscripcion_asignaturas.pdf}
-
-% TODO: verificar el título y la fecha exactos de la circular.
-\bibitem{circular13}
-Universidad Nacional de Colombia, Vicerrectoría Académica, ``Circular 13 de
-2026,'' Bogotá, Colombia, 2026.
+Dirección Nacional de Información Académica (DNINFOA), Universidad Nacional de Colombia,
+``Inscripción de asignaturas: infografía,'' 2026.
+[En línea]. Disponible en: \url{https://dninfoa.unal.edu.co/docs/Infografia_inscripcion_asignaturas.pdf}
 
 \bibitem{abdulkadiroglu1998}
-A. Abdulkadiroğlu y T. Sönmez, ``Random serial dictatorship and the core from
-random endowments in house allocation problems,'' \textit{Econometrica},
-vol.~66, no.~3, pp.~689--701, 1998.
+A. Abdulkadiroğlu y T. Sönmez,
+``Random serial dictatorship and the core from random endowments in house allocation problems,''
+\textit{Econometrica}, vol. 66, no. 3, pp. 689--701, 1998.
 
 \bibitem{budish2012}
-E. Budish y E. Cantillon, ``The multi-unit assignment problem: Theory and
-evidence from course allocation at Harvard,'' \textit{American Economic Review},
-vol.~102, no.~5, pp.~2237--2271, 2012.
+E. Budish y E. Cantillon,
+``The multi-unit assignment problem: Theory and evidence from course allocation at Harvard,''
+\textit{American Economic Review}, vol. 102, no. 5, pp. 2237--2271, 2012.
 
 \bibitem{budish2011}
-E. Budish, ``The combinatorial assignment problem: Approximate competitive
-equilibrium from equal incomes,'' \textit{Journal of Political Economy},
-vol.~119, no.~6, pp.~1061--1103, 2011.
+E. Budish,
+``The combinatorial assignment problem: Approximate competitive equilibrium from equal incomes,''
+\textit{Journal of Political Economy}, vol. 119, no. 6, pp. 1061--1103, 2011.
 
 \bibitem{budish2017}
-E. Budish, G. P. Cachon, J. B. Kessler y A. Othman, ``Course Match: A
-large-scale implementation of approximate competitive equilibrium from equal
-incomes for combinatorial allocation,'' \textit{Operations Research}, vol.~65,
-no.~2, pp.~314--336, 2017.
+E. Budish, G. P. Cachon, J. B. Kessler y A. Othman,
+``Course Match: A large-scale implementation of approximate competitive equilibrium from equal incomes for combinatorial allocation,''
+\textit{Operations Research}, vol. 65, no. 2, pp. 314--336, 2017.
 
-\bibitem{goodrich2014}
-M. T. Goodrich, R. Tamassia y M. H. Goldwasser, \textit{Data Structures and
-Algorithms in Java}, 6th ed. Hoboken, NJ, USA: Wiley, 2014.
-
-\bibitem{sedgewick2011}
-R. Sedgewick y K. Wayne, \textit{Algorithms}, 4th ed. Boston, MA, USA:
-Addison-Wesley, 2011.
-
-\bibitem{cormen2022}
+\bibitem{cormen}
 T. H. Cormen, C. E. Leiserson, R. L. Rivest y C. Stein,
-\textit{Introduction to Algorithms}, 4th ed. Cambridge, MA, USA: MIT Press, 2022.
+\textit{Introduction to Algorithms}, 4th ed.
+Cambridge, MA, USA: MIT Press, 2022.
+
+\bibitem{goodrich}
+M. T. Goodrich, R. Tamassia y M. H. Goldwasser,
+\textit{Data Structures and Algorithms in Java}, 6th ed.
+Hoboken, NJ, USA: Wiley, 2014.
 
 \end{thebibliography}
 
