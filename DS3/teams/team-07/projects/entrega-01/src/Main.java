@@ -1,44 +1,67 @@
+/**
+ * Demostración guiada de la Entrega 1: citas en orden de prioridad, lista de
+ * espera por prioridad y reasignación automática de un cupo liberado.
+ */
 public class Main {
     public static void main(String[] args) {
-        CourseGroup edatos = new CourseGroup("2016982", "Estructuras de Datos", "Gr-1", 2);
+        CourseGroup calculo = new CourseGroup("1000004", "Cálculo Diferencial", "Gr-1", 2);
+        CourseGroup calculo2 = new CourseGroup("1000004", "Cálculo Diferencial", "Gr-2", 3);
+
         // Student(código, nombre, discapacidad, PAPA, vulnerabilidad, avance %, IPA oficial)
-        Student s1 = new Student("2024101", "Estudiante Grupo 4 (IPA 3.0)", false, 4.0, false, 45.0, 3.0);
-        Student s2 = new Student("2024102", "Estudiante Grupo 1 (Discapacidad)", true, 3.8, false, 50.0, 0.0);
-        Student s3 = new Student("2024103", "Estudiante Grupo 3 (Avance >= 80%)", false, 4.2, false, 85.0, 0.0);
-        Student s4 = new Student("2024104", "Estudiante Grupo 4 (IPA 7.0)", false, 4.5, false, 60.0, 7.0);
+        // El IPA es un dato de entrada: no se calcula.
+        Student ana    = new Student("2024101", "Ana",    true,  3.8, false, 40.0, 0.0);
+        Student carla  = new Student("2024102", "Carla",  false, 4.1, false, 92.0, 0.0);
+        Student daniel = new Student("2024103", "Daniel", false, 3.9, false, 85.0, 0.0);
+        Student elena  = new Student("2024104", "Elena",  false, 4.3, false, 55.0, 7.5);
+        Student felipe = new Student("2024105", "Felipe", false, 4.0, false, 35.0, 6.0);
 
-        // Orden de prioridad según compareTo: Grupo 1 -> 2 -> 3 -> 4 (Grupo 4 por IPA).
-        // Temporal: se encolan a mano en ese orden. Cuando esté la cola de
-        // prioridad (SortedLinkedPriorityQueue), el orden se calculará solo.
-        System.out.println("¿s4 va antes que s1? " + (s4.compareTo(s1) < 0));
-        LinkedQueue<Student> colaCitasOficial = new LinkedQueue<>();
-        colaCitasOficial.enqueue(s2);
-        colaCitasOficial.enqueue(s3);
-        colaCitasOficial.enqueue(s4);
-        colaCitasOficial.enqueue(s1);
+        // 1. Ordenar por prioridad oficial usando la cola de prioridad y armar
+        //    la cola de la cita (FIFO) en ese orden. Daniel no alcanza a
+        //    inscribir en su cita; llega en el periodo de adiciones.
+        PriorityQueueADT<Student> orden = new SortedLinkedPriorityQueue<>();
+        orden.insert(felipe);
+        orden.insert(elena);
+        orden.insert(carla);
+        orden.insert(ana);
+        System.out.println("Orden de prioridad para las citas: " + orden);
 
-        System.out.println("\n--- Procesamiento de citas en la Cola FIFO ---");
-        while (!colaCitasOficial.isEmpty()) {
-            Student current = colaCitasOficial.dequeue();
-            System.out.println("Atendiendo a: " + current.getName()
-                    + " [Grupo " + current.getAssignedGroup() + " | IPA: " + current.getIpa() + "]");
+        LinkedQueue<Student> cita = new LinkedQueue<>();
+        while (!orden.isEmpty())
+            cita.enqueue(orden.removeHighest());
 
-            boolean assigned = edatos.occupySeat();
-            if (assigned)
-                System.out.println("   -> Matriculado con éxito. Cupos restantes: " + edatos.getAvailableSeats());
-            else
-                System.out.println("   -> Sin cupos disponibles (la lista de espera se agrega en la siguiente versión).");
+        System.out.println("\n--- 1. Citas: todos piden " + calculo + " (cupo " + calculo.getCapacity() + ") ---");
+        while (!cita.isEmpty()) {
+            Student current = cita.dequeue();
+            boolean enrolled = calculo.request(current);
+            System.out.println(current + (enrolled ? " -> inscrito" : " -> sin cupo, entra a lista de espera"));
         }
+        printState(calculo);
 
-        // Simular el carrito de selección con Deshacer (Pila LIFO)
-        System.out.println("\n--- Historial del Carrito de Selección (Pila LIFO) ---");
-        LinkedStack<String> carrito = new LinkedStack<>();
-        carrito.push("Estructuras de Datos - Gr 1");
-        carrito.push("Algoritmos - Gr 2");
+        // 2. Adiciones: Daniel llega después, pero su prioridad (grupo 3) lo
+        //    pone por delante de Elena y Felipe (grupo 4).
+        System.out.println("\n--- 2. Adiciones: Daniel pide " + calculo + " ---");
+        calculo.request(daniel);
+        printState(calculo);
 
-        System.out.println("Último curso añadido: " + carrito.peek());
-        String deshecho = carrito.pop();
-        System.out.println("(Pop): Se removió -> " + deshecho);
-        System.out.println("Curso actual en el carrito: " + carrito.peek());
+        // 3. Cancelación: el cupo pasa solo al primero de la lista de espera.
+        System.out.println("\n--- 3. Carla cancela ---");
+        Student promoted = calculo.cancel(carla);
+        System.out.println("El cupo liberado se asignó automáticamente a: " + promoted);
+        printState(calculo);
+
+        // 4. Carrito de selección con deshacer (pila LIFO).
+        System.out.println("\n--- 4. Carrito de Felipe con deshacer ---");
+        LinkedStack<CourseGroup> carrito = new LinkedStack<>();
+        carrito.push(calculo);
+        carrito.push(calculo2);
+        System.out.println("Último grupo añadido: " + carrito.peek());
+        System.out.println("Deshacer -> se quita: " + carrito.pop());
+        System.out.println("Queda en el tope del carrito: " + carrito.peek());
+    }
+
+    private static void printState(CourseGroup group) {
+        System.out.println("   Inscritos en " + group + ": " + group.getEnrolled()
+                + " | Cupos libres: " + group.getAvailableSeats());
+        System.out.println("   Lista de espera: " + group.getWaitlist());
     }
 }

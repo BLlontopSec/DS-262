@@ -4,30 +4,44 @@ Proyecto semestral de Estructuras de Datos (DS3, grupo 03, 2026-2) — **team-07
 
 ## Descripción
 
-Sistema por consola, en Java, que simula la inscripción de asignaturas por citas de la Universidad Nacional (sede Bogotá, pregrado) según los grupos de prelación de la Circular 13 de 2026. La meta del semestre es agregar una **lista de espera por prioridad** por grupo, para que los cupos liberados se asignen al estudiante de mayor prioridad y no a quien recargue primero el SIA. También se planean la sugerencia de grupos sin cruce de horario y reportes de demanda.
+Sistema por consola, en Java, que simula la inscripción de asignaturas por citas de la Universidad Nacional (sede Bogotá, pregrado) según los grupos de prelación de la Circular 13 de 2026.
 
-En esta primera versión:
+Hoy, cuando alguien cancela, el cupo liberado se lo queda quien recargue primero el SIA. SISO-UNAL agrega una **lista de espera por prioridad** a cada grupo: cuando el grupo está lleno, el estudiante queda en espera según su prioridad oficial, y cada cupo liberado se asigna automáticamente al de mayor prioridad. En las siguientes entregas se agregan la sugerencia de grupos sin cruce de horario y los reportes de demanda insatisfecha.
 
-- `Student` clasifica al estudiante en los grupos 1 a 4 (discapacidad, vulnerabilidad académica, avance ≥ 80 %, resto) y compara prioridades. El IPA es un dato oficial de entrada; no se recalcula.
-- `LinkedQueue` atiende a los estudiantes de una cita en orden de llegada (FIFO).
-- `CourseGroup` controla los cupos de un grupo.
-- `LinkedStack` modela el carrito de selección con deshacer.
+**Prioridad.** `Student` ubica a cada estudiante en uno de los cuatro grupos de prelación:
+
+1. discapacidad;
+2. vulnerabilidad académica (PAPA ≤ 3.1 o programas como PEAMA);
+3. avance ≥ 80 %;
+4. el resto.
+
+Dentro de cada grupo el orden es: grupo 1, PAPA de mayor a menor; grupo 2, PAPA de menor a mayor (más riesgo primero); grupo 3, avance de mayor a menor y luego PAPA; grupo 4, IPA de mayor a menor. El último desempate es el código. **El IPA es un dato oficial de entrada; el sistema no lo calcula.**
 
 ## Integrantes
 
 | Usuario de GitHub | Aporte |
 |---|---|
-| [@BLlontopSec](https://github.com/BLlontopSec) | Versión inicial de `Node`, `LinkedQueue`, `LinkedStack`, `Student`, `CourseGroup` y `Main`. |
-| [@DfCastilloa](https://github.com/DfCastilloa) | Correcciones: estructuras genéricas, `peek` en la cola, IPA como dato de entrada, `compareTo` por prioridad; README. |
+| [@BLlontopSec](https://github.com/BLlontopSec) | Versión inicial de `Node`, `LinkedQueue`, `LinkedStack`, `Student`, `CourseGroup` y `Main`; documento base de la propuesta. |
+| [@DfCastilloa](https://github.com/DfCastilloa) | Estructuras genéricas, comparación por prioridad en `Student`, `LinkedList`, `PriorityQueueADT`, `SortedLinkedPriorityQueue`, lista de espera y cancelación en `CourseGroup`, demo y README. |
 | [@hoverwars](https://github.com/hoverwars) | Por definir. |
 
 ## Estructuras de datos
 
-| Estructura | Uso en el proyecto | Operaciones | Costo |
-|---|---|---|---|
-| `LinkedQueue<T>` (cola FIFO enlazada) | Estudiantes de una cita, en orden de llegada | `enqueue`, `dequeue`, `peek` | O(1) |
-| `LinkedStack<T>` (pila enlazada) | Carrito de selección con deshacer | `push`, `pop`, `peek` | O(1) |
-| `Student.compareTo` | Orden de prioridad entre estudiantes | comparar | O(1) |
+| Estructura | Uso en el proyecto | Operaciones y costo |
+|---|---|---|
+| `SortedLinkedPriorityQueue<T>` (implementa `PriorityQueueADT<T>`) | Lista de espera de cada grupo; ordenar a los estudiantes para las citas | `insert` O(w), `removeHighest` O(1), `peekHighest` O(1), `remove`/`contains` O(w) |
+| `LinkedQueue<T>` (cola FIFO) | Estudiantes de una cita, en orden de llegada | `enqueue`, `dequeue`, `peek` O(1) |
+| `LinkedList<T>` (con referencia al último nodo) | Inscritos de un grupo | `addLast` O(1), `remove`/`contains` O(c) |
+| `LinkedStack<T>` (pila) | Carrito de selección con deshacer | `push`, `pop`, `peek` O(1) |
+
+w = tamaño de la lista de espera; c = cupo del grupo.
+
+La lista de espera se programa contra la interfaz `PriorityQueueADT`, para que en la Entrega 2 la lista ordenada se pueda reemplazar por un heap (O(log w) en inserción y extracción) sin cambiar `CourseGroup`.
+
+Operaciones de `CourseGroup`:
+
+- `request(s)`: inscribe si hay cupo; si no, el estudiante entra a la lista de espera. Cuesta O(c + w), porque primero verifica que el estudiante no esté ya inscrito ni en espera.
+- `cancel(s)`: retira al estudiante, O(c), y pasa el cupo al primero de la lista de espera, O(1).
 
 ## Requisitos
 
@@ -42,22 +56,56 @@ javac -encoding UTF-8 -d out src/*.java
 java -cp out Main
 ```
 
-Salida esperada (resumen): el estudiante del grupo 1 y el del grupo 3 obtienen los 2 cupos; los dos del grupo 4 se quedan sin cupo; luego el carrito agrega dos cursos y deshace el último.
+En la consola de Windows, si las tildes salen mal, ejecutar antes `chcp 65001`.
+
+## Salida esperada
+
+```text
+Orden de prioridad para las citas: [Ana (G1), Carla (G3), Elena (G4), Felipe (G4)]
+
+--- 1. Citas: todos piden Cálculo Diferencial Gr-1 (cupo 2) ---
+Ana (G1) -> inscrito
+Carla (G3) -> inscrito
+Elena (G4) -> sin cupo, entra a lista de espera
+Felipe (G4) -> sin cupo, entra a lista de espera
+   Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Carla (G3)] | Cupos libres: 0
+   Lista de espera: [Elena (G4), Felipe (G4)]
+
+--- 2. Adiciones: Daniel pide Cálculo Diferencial Gr-1 ---
+   Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Carla (G3)] | Cupos libres: 0
+   Lista de espera: [Daniel (G3), Elena (G4), Felipe (G4)]
+
+--- 3. Carla cancela ---
+El cupo liberado se asignó automáticamente a: Daniel (G3)
+   Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Daniel (G3)] | Cupos libres: 0
+   Lista de espera: [Elena (G4), Felipe (G4)]
+
+--- 4. Carrito de Felipe con deshacer ---
+Último grupo añadido: Cálculo Diferencial Gr-2
+Deshacer -> se quita: Cálculo Diferencial Gr-2
+Queda en el tope del carrito: Cálculo Diferencial Gr-1
+```
+
+Lo que muestra: Daniel llegó **después** que Elena y Felipe, pero queda primero en la lista por su prioridad (grupo 3). Por eso recibe el cupo que libera Carla.
 
 ## Estado
 
-- [x] Estructuras base: `Node`, `LinkedQueue`, `LinkedStack`
-- [x] Clasificación por grupos de prelación y comparación de prioridad
-- [x] Control de cupos por grupo
-- [ ] Lista de espera por prioridad y reasignación automática al cancelar
-- [ ] Ordenamiento automático de estudiantes y franjas de citas
-- [ ] Cruces de horario, sugerencia de grupos y reportes (entregas 2 y 3)
+- [x] Estructuras propias genéricas: `Node`, `LinkedList`, `LinkedQueue`, `LinkedStack`, `PriorityQueueADT`, `SortedLinkedPriorityQueue`
+- [x] Grupos de prelación y orden de prioridad (IPA como dato)
+- [x] Inscripción con cupo y lista de espera por prioridad
+- [x] Cancelación con reasignación automática del cupo
+- [x] Carrito con deshacer
+- [ ] Sacar al estudiante de las listas de espera de otros grupos de la misma asignatura
+- [ ] Franjas de citas (arreglo de colas) y catálogo con varios grupos
+- [ ] Heap, tabla hash, datos sintéticos a escala real, cruces de horario (Entrega 2)
+- [ ] Prerrequisitos con grafos, sugerencia de grupos y reportes (Entrega 3)
 
 ## Limitaciones
 
-- El orden de la cola de citas se arma a mano en `Main`; el ordenamiento automático llega con la cola de prioridad.
-- Cuando un grupo está lleno, el estudiante todavía no pasa a una lista de espera.
+- Demostración guiada, sin menú interactivo.
+- Un estudiante puede quedar en espera en dos grupos de la misma asignatura; todavía no se le retira del otro cuando obtiene cupo.
+- Insertar en la lista ordenada cuesta O(w); a escala real se reemplazará por un heap.
 
 ## Declaración de uso de IA
 
-Se usó Claude (Anthropic) para revisar el código y proponer correcciones. Los integrantes verificaron y aceptan los cambios.
+Se usó Claude (Anthropic) para revisar el código, proponer correcciones e implementar la lista de espera por prioridad. Los integrantes verificaron el código y responden por él.
