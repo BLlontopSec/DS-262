@@ -396,7 +396,7 @@ utilizan las colecciones de \texttt{java.util} (por ejemplo,
 lo recalcula. La circular no publica los pesos de sus factores.
 \item El grupo de prelación se deriva de atributos del estudiante: discapacidad
 acreditada (Grupo~1); PAPA $\le 3.1$ o indicador de vulnerabilidad académica
-(Grupo~2); avance $\ge 80\,\%$ (Grupo~3); en otro caso, Grupo~4.
+(Grupo~2); avance $\ge 80$\,\% (Grupo~3); en otro caso, Grupo~4.
 \item Dentro de cada grupo se ordena así: Grupo~1 por PAPA descendente; Grupo~2
 por PAPA ascendente (mayor riesgo primero); Grupo~3 por avance descendente y
 luego PAPA descendente; Grupo~4 por IPA descendente. El último desempate es el
@@ -705,11 +705,13 @@ un grupo y $w$ para el tamaño de una lista de espera.
 \centering
 \caption{Estructuras de datos de la primera entrega}
 \label{tab:estructuras}
-\begin{tabular}{@{}p{2.6cm}p{3.3cm}p{2.8cm}p{3.4cm}p{2.4cm}p{2.4cm}@{}}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{2.6cm}p{2.9cm}p{2.5cm}p{3.3cm}p{2.6cm}p{2.6cm}@{}}
 \toprule
 Estructura & Información que representa & Operaciones & Justificación & Alternativas & Costos \\
 \midrule
-Cola de prioridad sobre lista ordenada (\texttt{SortedLinkedPriorityQueue}) &
+Cola de prioridad sobre lista ordenada (\texttt{SortedLinked}\allowbreak\texttt{PriorityQueue}) &
 Lista de espera de un grupo; orden de atención de la cita &
 \texttt{insert}, \texttt{removeHighest}, \texttt{peekHighest}, \texttt{remove},
 \texttt{contains} &
