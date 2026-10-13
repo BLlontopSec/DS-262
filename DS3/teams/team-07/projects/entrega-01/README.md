@@ -6,7 +6,7 @@ Proyecto semestral de Estructuras de Datos (DS3, grupo 03, 2026-2) — **team-07
 
 Sistema por consola, en Java, que simula la inscripción de asignaturas por citas de la Universidad Nacional (sede Bogotá, pregrado) según los grupos de prelación de la Circular 13 de 2026.
 
-Hoy, cuando alguien cancela, el cupo liberado se lo queda quien recargue primero el SIA. SISO-UNAL agrega una **lista de espera por prioridad** a cada grupo: cuando el grupo está lleno, el estudiante queda en espera según su prioridad oficial, y cada cupo liberado se asigna automáticamente al de mayor prioridad. En las siguientes entregas se agregan la sugerencia de grupos sin cruce de horario y los reportes de demanda insatisfecha.
+Hoy, cuando alguien cancela, el cupo liberado se lo queda quien recargue primero el SIA. SISO-UNAL agrega una **lista de espera por prioridad** a cada grupo. Cuando el grupo está lleno, el estudiante puede confirmar que acepta la asignación automática; si la acepta, queda en espera según su prioridad oficial, y cada cupo liberado se asigna automáticamente al de mayor prioridad. Si no la acepta, no entra a la lista. La lista de espera reasigna cupos existentes; no crea cupos adicionales, como sí lo hacen los sobrecupos. En las siguientes entregas se agregan la sugerencia de grupos sin cruce de horario y los reportes de demanda insatisfecha.
 
 **Prioridad.** `Student` ubica a cada estudiante en uno de los cuatro grupos de prelación:
 
@@ -40,7 +40,8 @@ La lista de espera se programa contra la interfaz `PriorityQueueADT`, para que e
 
 Operaciones de `CourseGroup`:
 
-- `request(s)`: inscribe si hay cupo; si no, el estudiante entra a la lista de espera. Cuesta O(c + w), porque primero verifica que el estudiante no esté ya inscrito ni en espera.
+- `request(s, aceptaAsignacion)`: inscribe si hay cupo (`ENROLLED`). Si no hay cupo y el estudiante acepta la asignación automática, entra a la lista de espera (`WAITLISTED`); si no la acepta, no entra (`REJECTED`). Cuesta O(c + w), porque primero verifica que el estudiante no esté ya inscrito ni en espera.
+- `leaveWaitlist(s)`: el estudiante retira su aceptación y sale de la lista, O(w).
 - `cancel(s)`: retira al estudiante, O(c), y pasa el cupo al primero de la lista de espera, O(1).
 
 ## Requisitos
@@ -66,19 +67,20 @@ Orden de prioridad para las citas: [Ana (G1), Carla (G3), Elena (G4), Felipe (G4
 --- 1. Citas: todos piden Cálculo Diferencial Gr-1 (cupo 2) ---
 Ana (G1) -> inscrito
 Carla (G3) -> inscrito
-Elena (G4) -> sin cupo, entra a lista de espera
-Felipe (G4) -> sin cupo, entra a lista de espera
+Elena (G4) -> sin cupo; aceptó la asignación automática, entra a lista de espera
+Felipe (G4) -> sin cupo; no aceptó la asignación automática, no entra a la lista
    Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Carla (G3)] | Cupos libres: 0
-   Lista de espera: [Elena (G4), Felipe (G4)]
+   Lista de espera: [Elena (G4)]
 
 --- 2. Adiciones: Daniel pide Cálculo Diferencial Gr-1 ---
+Daniel (G3) -> sin cupo; aceptó la asignación automática, entra a lista de espera
    Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Carla (G3)] | Cupos libres: 0
-   Lista de espera: [Daniel (G3), Elena (G4), Felipe (G4)]
+   Lista de espera: [Daniel (G3), Elena (G4)]
 
 --- 3. Carla cancela ---
 El cupo liberado se asignó automáticamente a: Daniel (G3)
    Inscritos en Cálculo Diferencial Gr-1: [Ana (G1), Daniel (G3)] | Cupos libres: 0
-   Lista de espera: [Elena (G4), Felipe (G4)]
+   Lista de espera: [Elena (G4)]
 
 --- 4. Carrito de Felipe con deshacer ---
 Último grupo añadido: Cálculo Diferencial Gr-2
@@ -86,13 +88,13 @@ Deshacer -> se quita: Cálculo Diferencial Gr-2
 Queda en el tope del carrito: Cálculo Diferencial Gr-1
 ```
 
-Lo que muestra: Daniel llegó **después** que Elena y Felipe, pero queda primero en la lista por su prioridad (grupo 3). Por eso recibe el cupo que libera Carla.
+Lo que muestra: Felipe no aceptó la asignación automática, así que no entra a la lista. Daniel llegó **después** que Elena, pero queda primero en la lista por su prioridad (grupo 3); por eso recibe el cupo que libera Carla.
 
 ## Estado
 
 - [x] Estructuras propias genéricas: `Node`, `LinkedList`, `LinkedQueue`, `LinkedStack`, `PriorityQueueADT`, `SortedLinkedPriorityQueue`
 - [x] Grupos de prelación y orden de prioridad (IPA como dato)
-- [x] Inscripción con cupo y lista de espera por prioridad
+- [x] Inscripción con cupo y lista de espera por prioridad, con confirmación de la asignación automática
 - [x] Cancelación con reasignación automática del cupo
 - [x] Carrito con deshacer
 - [ ] Sacar al estudiante de las listas de espera de otros grupos de la misma asignatura
@@ -105,6 +107,8 @@ Lo que muestra: Daniel llegó **después** que Elena y Felipe, pero queda primer
 - Demostración guiada, sin menú interactivo.
 - Un estudiante puede quedar en espera en dos grupos de la misma asignatura; todavía no se le retira del otro cuando obtiene cupo.
 - Insertar en la lista ordenada cuesta O(w); a escala real se reemplazará por un heap.
+- La aceptación se da al pedir el grupo y la asignación es inmediata; una oferta con plazo para aceptar o rechazar el cupo queda para la Entrega 2.
+- Los sobrecupos (cupos adicionales aprobados por la unidad académica) no se modelan.
 
 ## Declaración de uso de IA
 

@@ -27,20 +27,28 @@ public class CourseGroup
     }
 
     /**
-     * Solicitud de inscripción: si hay cupo, inscribe (O(1) más la
-     * verificación O(n)); si no, entra a la lista de espera por prioridad (O(w)).
+     * Solicitud de inscripción. Si hay cupo, inscribe. Si no, el estudiante
+     * entra a la lista de espera solo si confirmó que acepta que el cupo se le
+     * asigne automáticamente cuando alguien cancele.
+     * Costo: O(c + w) por la verificación de duplicados; insertar en espera es O(w).
      *
-     * @return true si quedó inscrito, false si quedó en lista de espera
+     * @param acceptsAutoAssignment true si el estudiante acepta la asignación automática
      */
-    public boolean request(Student student) {
+    public RequestResult request(Student student, boolean acceptsAutoAssignment) {
         if (enrolled.contains(student) || waitlist.contains(student))
             throw new IllegalStateException(student.getName() + " ya está en " + this);
         if (hasSeat()) {
             enrolled.addLast(student);
-            return true;
+            return RequestResult.ENROLLED;
         }
+        if (!acceptsAutoAssignment) return RequestResult.REJECTED;
         waitlist.insert(student);
-        return false;
+        return RequestResult.WAITLISTED;
+    }
+
+    /** El estudiante retira su aceptación y sale de la lista de espera. O(w). */
+    public boolean leaveWaitlist(Student student) {
+        return waitlist.remove(student);
     }
 
     /**

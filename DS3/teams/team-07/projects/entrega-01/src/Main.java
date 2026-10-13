@@ -29,18 +29,21 @@ public class Main {
         while (!orden.isEmpty())
             cita.enqueue(orden.removeHighest());
 
+        // Cada estudiante decide si acepta que el cupo se le asigne
+        // automáticamente si alguien cancela. Felipe no lo acepta.
         System.out.println("\n--- 1. Citas: todos piden " + calculo + " (cupo " + calculo.getCapacity() + ") ---");
         while (!cita.isEmpty()) {
             Student current = cita.dequeue();
-            boolean enrolled = calculo.request(current);
-            System.out.println(current + (enrolled ? " -> inscrito" : " -> sin cupo, entra a lista de espera"));
+            boolean accepts = current != felipe;
+            RequestResult result = calculo.request(current, accepts);
+            System.out.println(current + " -> " + describe(result));
         }
         printState(calculo);
 
         // 2. Adiciones: Daniel llega después, pero su prioridad (grupo 3) lo
-        //    pone por delante de Elena y Felipe (grupo 4).
+        //    pone por delante de Elena (grupo 4).
         System.out.println("\n--- 2. Adiciones: Daniel pide " + calculo + " ---");
-        calculo.request(daniel);
+        System.out.println(daniel + " -> " + describe(calculo.request(daniel, true)));
         printState(calculo);
 
         // 3. Cancelación: el cupo pasa solo al primero de la lista de espera.
@@ -57,6 +60,14 @@ public class Main {
         System.out.println("Último grupo añadido: " + carrito.peek());
         System.out.println("Deshacer -> se quita: " + carrito.pop());
         System.out.println("Queda en el tope del carrito: " + carrito.peek());
+    }
+
+    private static String describe(RequestResult result) {
+        switch (result) {
+            case ENROLLED:   return "inscrito";
+            case WAITLISTED: return "sin cupo; aceptó la asignación automática, entra a lista de espera";
+            default:         return "sin cupo; no aceptó la asignación automática, no entra a la lista";
+        }
     }
 
     private static void printState(CourseGroup group) {
