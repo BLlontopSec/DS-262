@@ -1,6 +1,12 @@
-public class LinkedStack
+/**
+ * Pila (LIFO) enlazada. Se usa para el carrito de selección: deshacer la
+ * última acción es sacar el elemento del tope.
+ *
+ * @param <T> tipo de los elementos
+ */
+public class LinkedStack<T>
 {
-    private Node top;
+    private Node<T> top;
     private int size;
 
     public LinkedStack() {
@@ -8,24 +14,27 @@ public class LinkedStack
         this.size = 0;
     }
 
-    public void push(Object item) {
-        Node newNode = new Node(item);
+    /** Agrega un elemento en el tope. O(1). */
+    public void push(T item) {
+        Node<T> newNode = new Node<>(item);
         newNode.next = top;
         top = newNode;
         size++;
     }
 
-    public String pop() {
-        if (isEmpty()) return null;
-        String item = (String) top.data;
+    /** Saca y devuelve el elemento del tope. O(1). */
+    public T pop() {
+        if (isEmpty()) throw new IllegalStateException("La pila está vacía");
+        T item = top.data;
         top = top.next;
         size--;
         return item;
     }
 
-    public String peek() {
-        if (isEmpty()) return null;
-        return (String) top.data;
+    /** Devuelve el elemento del tope sin sacarlo. O(1). */
+    public T peek() {
+        if (isEmpty()) throw new IllegalStateException("La pila está vacía");
+        return top.data;
     }
 
     public boolean isEmpty() {
